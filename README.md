@@ -1,6 +1,6 @@
-#Установка
+# Установка
 
-````
+````sh
 composer require doctrs/sonata_import_bundle
 ````
 
@@ -50,7 +50,7 @@ php app/console doctrine:schema:update --force
 
 Установка бандла завершена
 
-##Изменение сущностей sonataAdminBundle
+## Изменение сущностей sonataAdminBundle
 
 Добавляем или изменяем метод `configureRoutes` в классах, на основе которых создается sonata admin
 
