@@ -8,6 +8,7 @@ use Doctrine\ORM\ORMException;
 use Doctrs\SonataImportBundle\Entity\CsvFile;
 use Doctrs\SonataImportBundle\Entity\ImportLog;
 use Doctrs\SonataImportBundle\Loaders\CsvFileLoader;
+use Doctrs\SonataImportBundle\Loaders\FileLoaderInterface;
 use Doctrs\SonataImportBundle\Service\ImportAbstract;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -45,6 +46,26 @@ class SonataImportCommand extends ContainerAwareCommand{
 
         /** @var CsvFile $csvFile */
         $csvFile = $this->em->getRepository('DoctrsSonataImportBundle:CsvFile')->find($csvFileId);
+        $loaderClass = $this->getContainer()->getParameter('doctrs_sonata_import');
+        $fileLoader =
+            isset($loaderClass['class_loader']) ?
+                $loaderClass['class_loader'] :
+                'CsvFileLoader'
+            ;
+        if(!class_exists($fileLoader)){
+            $csvFile->setStatus(CsvFile::STATUS_ERROR);
+            $csvFile->setMessage('class_loader not found');
+            $this->em->flush($csvFile);
+            return;
+        }
+        $fileLoader = new $fileLoader();
+        if(!$fileLoader instanceof FileLoaderInterface){
+            $csvFile->setStatus(CsvFile::STATUS_ERROR);
+            $csvFile->setMessage('class_loader must be instanceof "FileLoaderInterface"');
+            $this->em->flush($csvFile);
+            return;
+        }
+
 
         try {
             $fileLoader = new CsvFileLoader();

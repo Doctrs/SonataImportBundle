@@ -1,0 +1,24 @@
+index:
+  h1: 'Import'
+  h2: 'load Format'
+  table:
+    column: '#Column'
+    name: '#Name'
+upload:
+  h1:
+    load: 'Loading . . .'
+    error: 'Failed'
+    success: 'Successfully completed'
+  upload_entity: 'Entity Uploaded '
+  error: 'Error'
+  log: 'Log download'
+  table:
+    line: '#String'
+    status: '#Status'
+    entity: '#Entity'
+    error: '#Errors'
+    stat:
+      new: 'New'
+      update: 'updated'
+      error: 'Error'
+    edit: 'Edit'

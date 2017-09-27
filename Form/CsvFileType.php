@@ -31,7 +31,7 @@ class CsvFileType extends AbstractType implements ContainerAwareInterface
     {
         $builder
             ->add('file', FileType::class, [
-                'label' => 'Файл'
+                'label' => 'File'
             ])
             ->add('submit', SubmitType::class)
         ;

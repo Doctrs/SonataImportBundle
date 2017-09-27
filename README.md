@@ -1,7 +1,7 @@
 # Установка
 
 ````sh
-composer require doctrs/sonata_import_bundle
+composer require doctrs/sonata-import0bundle
 ````
 
 Добавляем бандл в `AppKernel.php`
@@ -26,8 +26,8 @@ doctrine:
 ```yaml
 doctrs_sonata_import:
     mappings:
-        - { name: center_point, class: promaotlas.form_format.point}
-        - { name: city_autocomplete, class: promoatlas.form_format.city_pa}
+        - { name: center_point, class: dcotr.form_format.point}
+        - { name: city_autocomplete, class: doctrs.form_format.city_pa}
     upload_dir: %kernel.root_dir%/../web/uploads
     encode:
         default: utf8

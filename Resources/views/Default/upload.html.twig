@@ -2,9 +2,9 @@
 
 {% block form %}
     {% if csvFile.status == 1 %}
-        <h1 id="head_h1">Загрузка . . .</h1>
+        <h1 id="head_h1">{{ 'upload.h1.load'|trans({}, 'main') }}</h1>
         <div id="uploading">
-            <span id="count">0</span> сущностей загружено
+            {{ 'upload.upload_entity'|trans({}, 'main') }}<span id="count">0</span>
         </div>
 
         <script>
@@ -18,15 +18,14 @@
                     'dataType': 'JSON',
                     'success': function(data){
                         $('#count').html(data.count);
-                        console.log(data);
                         switch(data.status){
                             case 2:
-                                $('#head_h1').html('Успешно завершено');
+                                $('#head_h1').html('{{ 'upload.h1.success'|trans({}, 'main') }}');
                                 window.location.reload();
                                 break;
                             case 3:
-                                $('#head_h1').html('Завершено с ошибкой');
-                                $('#uploading').after('<div class="error">Ошибка</div>');
+                                $('#head_h1').html('{{ 'upload.h1.error'|trans({}, 'main') }}');
+                                $('#uploading').after('<div class="error">{{ 'upload.error'|trans({}, 'main') }}</div>');
                                 break;
                             default:
                                 setTimeout(function(){
@@ -35,29 +34,29 @@
                         }
                     },
                     'error': function(){
-
+                        alert('{{ 'upload.error'|trans({}, 'main') }}');
                     }
                 });
             }
         </script>
     {% else %}
         {% if csvFile.status == 3 %}
-            <h1 id="head_h1">Завершено с ошибкой</h1>
-            Ошибка: {{ csvFile.message }}
+            <h1 id="head_h1">{{ 'upload.h1.error'|trans({}, 'main') }}</h1>
+            {{ 'upload.error'|trans({}, 'main') }}: {{ csvFile.message }}
         {% else %}
-            <h1 id="head_h1">Успешно завершено</h1>
+            <h1 id="head_h1">{{ 'upload.h1.success'|trans({}, 'main') }}</h1>
         {% endif %}
         <div id="uploading">
-            <span id="count">{{ countImport }}</span> сущностей загружено
+            {{ 'upload.upload_entity'|trans({}, 'main') }}<span id="count">{{ countImport }}</span>
         </div>
-        <h1 id="head_h1">Лог загрузки</h1>
+        <h1 id="head_h1">{{ 'upload.log'|trans({}, 'main') }}</h1>
         {{ pagerfanta(paginator) }}
         <table class="table">
             <tr>
-                <th>#Строка</th>
-                <th>#Статус</th>
-                <th>#Сущность</th>
-                <th>#Ошибки</th>
+                <th>{{ 'upload.table.line'|trans({}, 'main') }}</th>
+                <th>{{ 'upload.table.status'|trans({}, 'main') }}</th>
+                <th>{{ 'upload.table.entity'|trans({}, 'main') }}</th>
+                <th>{{ 'upload.table.error'|trans({}, 'main') }}</th>
             </tr>
             {% for i in paginator %}
 
@@ -65,17 +64,17 @@
                     <td>{{ i.line + 1 }}</td>
                     <td>
                         {% if i.status == 1 %}
-                            Новое
+                            {{ 'upload.table.stat.new'|trans({}, 'main') }}
                         {% elseif i.status == 2 %}
-                            Обновлено
+                            {{ 'upload.table.stat.update'|trans({}, 'main') }}
                         {% elseif i.status == 3 %}
-                            Ошибка
+                            {{ 'upload.table.stat.error'|trans({}, 'main') }}
                         {% endif %}
                     </td>
                     <td>
                         {% if i.foreignId %}
                             <a href="{{ admin.generateUrl('edit', {'id': i.foreignId}) }}">
-                                Редактировать
+                                {{ 'upload.table.edit'|trans({}, 'main') }}
                             </a>
                         {% endif %}
                     </td>

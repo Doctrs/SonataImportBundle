@@ -31,6 +31,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode('upload_dir')->end()
+                ->scalarNode('class_loader')->end()
                 ->arrayNode('encode')
                     ->children()
                         ->scalarNode('default')->end()

@@ -2,16 +2,16 @@
 
 
 {% block form %}
-    <h1>Импорт</h1>
+    <h1>{{ 'index.h1'|trans({}, 'main') }}</h1>
     {{ form(form) }}
-    <h2>Формат загрузки</h2>
+    <h2>{{ 'index.h2'|trans({}, 'main') }}</h2>
     <table class="table">
         <tr>
             <th>
-                #Столбец
+                {{ 'index.table.column'|trans({}, 'main') }}
             </th>
             <th>
-                #Название поля
+                {{ 'index.table.name'|trans({}, 'main') }}
             </th>
         </tr>
         {% for key, i in builder %}
