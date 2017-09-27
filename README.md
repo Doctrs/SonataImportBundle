@@ -28,7 +28,8 @@ doctrs_sonata_import:
     mappings:
         - { name: center_point, class: dcotr.form_format.point}
         - { name: city_autocomplete, class: doctrs.form_format.city_pa}
-    upload_dir: %kernel.root_dir%/../web/uploads
+    upload_dir: %kernel.root_dir%/../web/uploads    
+    class_loader: Doctrs\SonataImportBundle\Loaders\CsvFileLoader
     encode:
         default: utf8
         list:
