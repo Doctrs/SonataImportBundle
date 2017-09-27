@@ -1,7 +1,7 @@
 # Установка
 
 ````sh
-composer require doctrs/sonata-import0bundle
+composer require doctrs/sonata-import-bundle
 ````
 
 Добавляем бандл в `AppKernel.php`
@@ -88,3 +88,13 @@ php app/console doctrine:schema:update --force
         return $actions;
     }
 ```
+Если у вас эти методы не определены в админ классах, то можно просто использовать трейт
+
+```php
+use Doctrs\SonataImportBundle\Admin\AdminImportTrait;
+...
+class EntityAdmin extends AbstractAdmin {
+...
+use AdminImportTrait;
+```
+Оба метода описанные выше добавленны в `AdminImportTrait`
