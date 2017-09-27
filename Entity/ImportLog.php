@@ -136,6 +136,13 @@ class ImportLog
     }
 
     /**
+     * @return mixed
+     */
+    public function messageEncode(){
+        return json_decode($this->message);
+    }
+
+    /**
      * Set line
      *
      * @param string $line

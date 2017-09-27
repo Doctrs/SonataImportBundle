@@ -195,7 +195,7 @@ class SonataImportCommand extends ContainerAwareCommand{
             }
         }
 
-        if ($type === 'date') {
+        if ($type === 'date' || $type === 'datetime') {
             $value = $value ? new \DateTime($value) : null;
         }
         if ($type === 'boolean') {

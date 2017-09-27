@@ -10,6 +10,12 @@ composer require doctrs/sonata-import-bundle
 new Doctrs\SonataImportBundle\DoctrsSonataImportBundle()
 ````
 
+Данный бандл так же подтягивает `white-october/pagerfanta-bundle`. Если у вас его нет, то его тожде необхоидмо добавить в `AppKernel.php`
+
+```php
+new WhiteOctober\PagerfantaBundle\WhiteOctoberPagerfantaBundle(),
+```
+
 Добавляем mapping в файл config.yml
 
 ````yaml
@@ -26,7 +32,7 @@ doctrine:
 ```yaml
 doctrs_sonata_import:
     mappings:
-        - { name: center_point, class: dcotr.form_format.point}
+        - { name: center_point, class: doctrs.form_format.point}
         - { name: city_autocomplete, class: doctrs.form_format.city_pa}
     upload_dir: %kernel.root_dir%/../web/uploads    
     class_loader: Doctrs\SonataImportBundle\Loaders\CsvFileLoader

@@ -110,7 +110,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% set error_message = i.message|json_decode %}
+                        {% set error_message = i.messageEncode %}
                         {% if error_message|length %}
                             {% for i in error_message %}
                                 {{ i }}
