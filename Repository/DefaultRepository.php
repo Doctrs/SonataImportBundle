@@ -13,8 +13,23 @@ class DefaultRepository extends EntityRepository{
         $sql->select('data');
         if (sizeof($where)) {
             foreach ($where as $key => $value) {
-                $sql->andWhere('data.' . $key . ' = :' . $key);
-                $sql->setParameter($key, $value);
+                if(is_array($value)){
+                    if(!isset($value['dql'])){
+                        continue;
+                    }
+                    if(isset($value['bindParam']) && !is_array($value['bindParam'])){
+                        continue;
+                    }
+                    $sql->andWhere($value['dql']);
+                    if(isset($value['bindParam'])) {
+                        foreach ($value['bindParam'] as $key2 => $value2) {
+                            $sql->setParameter($key2, $value2);
+                        }
+                    }
+                } else {
+                    $sql->andWhere('data.' . $key . ' = :' . $key);
+                    $sql->setParameter($key, $value);
+                }
             }
         }
         if($getResult){

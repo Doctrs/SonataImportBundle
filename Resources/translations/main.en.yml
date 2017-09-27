@@ -9,7 +9,7 @@ upload:
     load: 'Loading . . .'
     error: 'Failed'
     success: 'Successfully completed'
-  upload_entity: 'Entity Uploaded '
+  upload_entity: 'Processed entities '
   error: 'Error'
   log: 'Log download'
   table:

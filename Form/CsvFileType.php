@@ -36,12 +36,9 @@ class CsvFileType extends AbstractType implements ContainerAwareInterface
             ->add('submit', SubmitType::class)
         ;
 
-        $encode =
-            isset($this->container->getParameter('doctrs_sonata_import')['encode']) ?
-                $this->container->getParameter('doctrs_sonata_import')['encode'] :
-                null;
-        $default_encode = isset($encode['default']) ? $encode['default'] : 'utf8';
-        $encode_list = isset($encode['list']) ? $encode['list'] : [];
+        $default_encode = $this->container->getParameter('doctrs_sonata_import.encode.default');
+        $encode_list = $this->container->getParameter('doctrs_sonata_import.encode.list');
+
         if(!count($encode_list)){
             $builder->add('encode', HiddenType::class, [
                 'data' => $default_encode
@@ -80,6 +77,6 @@ class CsvFileType extends AbstractType implements ContainerAwareInterface
      */
     public function getName()
     {
-        return 'promoatlas_sonataadminbundle_csvfile';
+        return 'doctrs_sonataadminbundle_csvfile';
     }
 }

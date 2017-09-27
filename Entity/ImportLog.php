@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ImportLog
  *
- * @ORM\Table("pa_import_log")
+ * @ORM\Table("ext_sonata_import_log")
  * @ORM\Entity(repositoryClass="Doctrs\SonataImportBundle\Repository\DefaultRepository")
  * @ORM\HasLifecycleCallbacks()
  */

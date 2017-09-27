@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrs\SonataImportBundle\Command;
 
 use Doctrine\ORM\EntityManager;
@@ -16,11 +15,8 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Debug\Exception\FatalErrorException;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SonataImportCommand extends ContainerAwareCommand{
 
@@ -46,12 +42,8 @@ class SonataImportCommand extends ContainerAwareCommand{
 
         /** @var CsvFile $csvFile */
         $csvFile = $this->em->getRepository('DoctrsSonataImportBundle:CsvFile')->find($csvFileId);
-        $loaderClass = $this->getContainer()->getParameter('doctrs_sonata_import');
-        $fileLoader =
-            isset($loaderClass['class_loader']) ?
-                $loaderClass['class_loader'] :
-                'CsvFileLoader'
-            ;
+        $fileLoader = $this->getContainer()->getParameter('doctrs_sonata_import.class_loader');
+
         if(!class_exists($fileLoader)){
             $csvFile->setStatus(CsvFile::STATUS_ERROR);
             $csvFile->setMessage('class_loader not found');
@@ -157,6 +149,19 @@ class SonataImportCommand extends ContainerAwareCommand{
             $csvFile->setStatus(CsvFile::STATUS_SUCCESS);
             $this->em->flush($csvFile);
         } catch(\Exception $e){
+            /**
+             * Данный хак нужен в случае бросания ORMException
+             * В случае бросания ORMException entity manager останавливается
+             * и его требуется перезагрузить
+             */
+            if (!$this->em->isOpen()) {
+                $this->em = $this->em->create(
+                    $this->em->getConnection(),
+                    $this->em->getConfiguration()
+                );
+                $csvFile = $this->em->getRepository('DoctrsSonataImportBundle:CsvFile')->find($csvFileId);
+            }
+
             $csvFile->setStatus(CsvFile::STATUS_ERROR);
             $csvFile->setMessage($e->getMessage());
             $this->em->flush($csvFile);
@@ -170,8 +175,7 @@ class SonataImportCommand extends ContainerAwareCommand{
 
     protected function setValue($value, FormBuilderInterface $fieldDescription, AbstractAdmin $admin){
 
-        $mappings = $this->getContainer()->getParameter('doctrs_sonata_import');
-        $mappings = isset($mappings['mappings']) ? $mappings['mappings'] : [];
+        $mappings = $this->getContainer()->getParameter('doctrs_sonata_import.mappings');
 
         $originalValue = $value;
         $field = $fieldDescription->getName();
@@ -251,9 +255,9 @@ class SonataImportCommand extends ContainerAwareCommand{
             if (!$value) {
                 throw new InvalidArgumentException(
                     sprintf(
-                    'Edit failed, object with id "%s" not found in association "%s".',
-                    $originalValue,
-                    $field)
+                        'Edit failed, object with id "%s" not found in association "%s".',
+                        $originalValue,
+                        $field)
                 );
             }
         }

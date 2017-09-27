@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\File;
 /**
  * CsvFile
  *
- * @ORM\Table("pa_csv_files")
+ * @ORM\Table("ext_sonata_import_file")
  * @ORM\Entity(repositoryClass="Doctrs\SonataImportBundle\Repository\DefaultRepository")
  * @ORM\HasLifecycleCallbacks()
  */

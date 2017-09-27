@@ -44,6 +44,6 @@ class ImportLogType extends AbstractType
      */
     public function getName()
     {
-        return 'promoatlas_sonataadminbundle_importlog';
+        return 'doctrs_sonataadminbundle_importlog';
     }
 }

@@ -23,18 +23,14 @@ class DefaultController extends CRUDController {
         ]);
         $form->handleRequest($request);
 
-        $pool = $this->container->get('sonata.admin.pool');
+        $pool = $this->get('sonata.admin.pool');
         /** @var AbstractAdmin $instance */
         $instance = $pool->getInstance($this->admin->getCode());
         $builder = $instance->getExportFields();
 
         if($form->isValid()){
             if(!$fileEntity->getFile()->getError()) {
-                $upload_dir =
-                    isset($this->getParameter('doctrs_sonata_import')['upload_dir']) ?
-                        $this->getParameter('doctrs_sonata_import')['upload_dir'] :
-                        $this->get('kernel')->getRootDir() . '/../web/uploads'
-                ;
+                $upload_dir = $this->getParameter('doctrs_sonata_import.upload_dir');
 
                 $file = $fileEntity->getFile();
                 $fileName = md5(uniqid() . time()) . '.' . $file->guessExtension();
@@ -45,7 +41,7 @@ class DefaultController extends CRUDController {
                 $em->flush($fileEntity);
 
                 $command = '/usr/bin/php ';
-                $command .= $this->container->getParameter('kernel.root_dir') . '/console ';
+                $command .= $this->get('kernel')->getRootDir() . '/console ';
                 $command .= 'promoatlas:sonata:import ';
                 $command .= $fileEntity->getId() . ' ';
                 $command .= '"' . $this->admin->getCode() . '" ';
@@ -87,12 +83,28 @@ class DefaultController extends CRUDController {
         if($request->get('ajax')){
             return new JsonResponse([
                 'status' => $csvFile->getStatus(),
+                'error' => $csvFile->getMessage(),
                 'count' => $countImport
             ]);
         }
-        $data = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->pagerfanta([
-            'csvFile' => $csvFile->getId()
-        ]);
+        $filter = [ 'csvFile' => $csvFile->getId() ];
+        switch($request->get('type', 'all')){
+            case 'success':
+                $filter['status'] = [
+                    'dql' => 'data.status = 1 or data.status = 2'
+                ];
+                break;
+            case 'new':
+                $filter['status'] = 1;
+                break;
+            case 'update':
+                $filter['status'] = 2;
+                break;
+            case 'error':
+                $filter['status'] = 3;
+                break;
+        }
+        $data = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->pagerfanta($filter);
         $paginator = new Pagerfanta(new DoctrineORMAdapter($data));
         $paginator->setCurrentPage($request->get('page', 1));
 

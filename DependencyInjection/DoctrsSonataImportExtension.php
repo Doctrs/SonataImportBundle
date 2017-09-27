@@ -21,9 +21,43 @@ class DoctrsSonataImportExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-        $container->setParameter('doctrs_sonata_import', $config);
+        $this->prepairConfig($config, $container);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
+    }
+
+    /**
+     * @param array            $config
+     * @param ContainerBuilder $container
+     */
+    private function prepairConfig(array $config, ContainerBuilder $container){
+        $container->setParameter(
+            'doctrs_sonata_import.mappings',
+            $config['mappings']
+        );
+        $container->setParameter(
+            'doctrs_sonata_import.upload_dir',
+            $config['upload_dir'] ? $config['upload_dir'] :
+                $container->get('kernel')->getRootDir() . '/../web/uploads'
+        );
+        $container->setParameter(
+            'doctrs_sonata_import.class_loader',
+            $config['class_loader']
+        );
+        if(!isset($config['encode'])){
+            $config['encode'] = [
+                'default' => 'utf8',
+                'list' => []
+            ];
+        }
+        $container->setParameter(
+            'doctrs_sonata_import.encode.default',
+            $config['encode']['default']
+        );
+        $container->setParameter(
+            'doctrs_sonata_import.encode.list',
+            $config['encode']['list']
+        );
     }
 }

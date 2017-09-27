@@ -25,7 +25,8 @@
                                 break;
                             case 3:
                                 $('#head_h1').html('{{ 'upload.h1.error'|trans({}, 'main') }}');
-                                $('#uploading').after('<div class="error">{{ 'upload.error'|trans({}, 'main') }}</div>');
+                                $('#uploading').after('<div class="error">{{ 'upload.error'|trans({}, 'main') }} ' + data.error + '</div>');
+                                window.location.reload();
                                 break;
                             default:
                                 setTimeout(function(){
@@ -40,6 +41,12 @@
             }
         </script>
     {% else %}
+        <style>
+            .status a.active{
+                color:black;
+                text-decoration: underline;
+            }
+        </style>
         {% if csvFile.status == 3 %}
             <h1 id="head_h1">{{ 'upload.h1.error'|trans({}, 'main') }}</h1>
             {{ 'upload.error'|trans({}, 'main') }}: {{ csvFile.message }}
@@ -50,6 +57,30 @@
             {{ 'upload.upload_entity'|trans({}, 'main') }}<span id="count">{{ countImport }}</span>
         </div>
         <h1 id="head_h1">{{ 'upload.log'|trans({}, 'main') }}</h1>
+
+        <div class="status">
+            <a {{ app.request.get('type') == 'all' ? 'class="active"' : '' }}
+                    href="?page={{ app.request.get('page', 1) }}&type=all">
+                Все
+            </a> |
+            <a {{ app.request.get('type') == 'success' ? 'class="active"' : '' }}
+                    href="?page={{ app.request.get('page', 1) }}&type=success">
+                Успешно загруженные
+            </a> |
+            <a {{ app.request.get('type') == 'new' ? 'class="active"' : '' }}
+                    href="?page={{ app.request.get('page', 1) }}&type=new">
+                Новые
+            </a> |
+            <a {{ app.request.get('type') == 'update' ? 'class="active"' : '' }}
+                    href="?page={{ app.request.get('page', 1) }}&type=update">
+                Обновленные
+            </a> |
+            <a {{ app.request.get('type') == 'error' ? 'class="active"' : '' }}
+                    href="?page={{ app.request.get('page', 1) }}&type=error">
+                С ошибкой
+            </a>
+        </div>
+
         {{ pagerfanta(paginator) }}
         <table class="table">
             <tr>
