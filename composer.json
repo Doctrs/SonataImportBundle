@@ -18,6 +18,5 @@
     },
     "autoload": {
         "psr-4": { "Doctrs\\SonataImportBundle\\": "" }
-    },
-    "target-dir": "Doctrs/SonataImportBundle"
+    }
 }
