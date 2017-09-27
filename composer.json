@@ -17,7 +17,7 @@
         "pagerfanta/pagerfanta": ">=1.0"
     },
     "autoload": {
-        "psr-4": { "Doctrs\\SonataImportBundle": "" }
+        "psr-4": { "Doctrs\\SonataImportBundle\\": "" }
     },
     "target-dir": "Doctrs/SonataImportBundle"
 }
