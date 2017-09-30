@@ -40,13 +40,13 @@ class DefaultController extends CRUDController {
                 $em->persist($fileEntity);
                 $em->flush($fileEntity);
 
-                $command = '/usr/bin/php ';
-                $command .= $this->get('kernel')->getRootDir() . '/console ';
-                $command .= 'promoatlas:sonata:import ';
-                $command .= $fileEntity->getId() . ' ';
-                $command .= '"' . $this->admin->getCode() . '" ';
-                $command .= '"' . ($fileEntity->getEncode() ? $fileEntity->getEncode() : 'utf8') . '" ';
-                $command .= '  > /dev/null 2>&1 &';
+                $command = sprintf(
+                    '/usr/bin/php %s/console promoatlas:sonata:import %d "%s" "%s" > /dev/null 2>&1 &',
+                    $this->get('kernel')->getRootDir(),
+                    $fileEntity->getId(),
+                    $this->admin->getCode(),
+                    $fileEntity->getEncode() ? $fileEntity->getEncode() : 'utf8'
+                );
 
                 $process = new Process($command);
                 $process->run();
@@ -64,7 +64,6 @@ class DefaultController extends CRUDController {
             'baseTemplate' => $this->getBaseTemplate(),
             'builder' => $builder,
             'action' => 'import',
-            '_navbar_title' => 'sdfsdf',
             'letters' => $this->getLetterArray()
         ]);
     }
