@@ -2,9 +2,27 @@
 
 {% block form %}
     {% if csvFile.status == 1 %}
-        <h1 id="head_h1">{{ 'upload.h1.load'|trans({}, 'main') }}</h1>
-        <div id="uploading">
-            {{ 'upload.upload_entity'|trans({}, 'main') }}<span id="count">0</span>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box box-primary">
+                            <div class="box-header">
+                                <h4 id="head_h1" class="box-title">
+                                    {{ 'upload.h1.load'|trans({}, 'main') }}
+                                </h4>
+                            </div>
+                            <div class="box-body">
+                                <div class="sonata-ba-collapsed-fields">
+                                    <div id="uploading">
+                                        {{ 'upload.upload_entity'|trans({}, 'main') }} <span id="count">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <script>
@@ -47,78 +65,100 @@
                 text-decoration: underline;
             }
         </style>
-        {% if csvFile.status == 3 %}
-            <h1 id="head_h1">{{ 'upload.h1.error'|trans({}, 'main') }}</h1>
-            {{ 'upload.error'|trans({}, 'main') }}: {{ csvFile.message }}
-        {% else %}
-            <h1 id="head_h1">{{ 'upload.h1.success'|trans({}, 'main') }}</h1>
-        {% endif %}
-        <div id="uploading">
-            {{ 'upload.upload_entity'|trans({}, 'main') }}<span id="count">{{ countImport }}</span>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box box-primary">
+                            <div class="box-header">
+
+                                {% if csvFile.status == 3 %}
+                                    <h4 id="head_h1" class="box-title" style="display: block">
+                                        {{ 'upload.h1.error'|trans({}, 'main') }}
+                                    </h4>
+                                    {{ 'upload.error'|trans({}, 'main') }}: {{ csvFile.message }}
+                                {% else %}
+                                    <h4 id="head_h1" class="box-title">
+                                        {{ 'upload.h1.success'|trans({}, 'main') }}
+                                    </h4>
+                                {% endif %}
+                            </div>
+                            <div class="box-body">
+                                <div class="sonata-ba-collapsed-fields">
+                                    <div id="uploading">
+                                        {{ 'upload.upload_entity'|trans({}, 'main') }}<span id="count">{{ countImport }}</span>
+                                    </div>
+                                    <h4 id="head_h1">{{ 'upload.log'|trans({}, 'main') }}</h4>
+
+                                    <div class="status">
+                                        <a {{ app.request.get('type') == 'all' ? 'class="active"' : '' }}
+                                                href="?page={{ app.request.get('page', 1) }}&type=all">
+                                            Все
+                                        </a> |
+                                        <a {{ app.request.get('type') == 'success' ? 'class="active"' : '' }}
+                                                href="?page={{ app.request.get('page', 1) }}&type=success">
+                                            Успешно загруженные
+                                        </a> |
+                                        <a {{ app.request.get('type') == 'new' ? 'class="active"' : '' }}
+                                                href="?page={{ app.request.get('page', 1) }}&type=new">
+                                            Новые
+                                        </a> |
+                                        <a {{ app.request.get('type') == 'update' ? 'class="active"' : '' }}
+                                                href="?page={{ app.request.get('page', 1) }}&type=update">
+                                            Обновленные
+                                        </a> |
+                                        <a {{ app.request.get('type') == 'error' ? 'class="active"' : '' }}
+                                                href="?page={{ app.request.get('page', 1) }}&type=error">
+                                            С ошибкой
+                                        </a>
+                                    </div>
+
+                                    {{ pagerfanta(paginator) }}
+                                    <table class="table">
+                                        <tr>
+                                            <th>{{ 'upload.table.line'|trans({}, 'main') }}</th>
+                                            <th>{{ 'upload.table.status'|trans({}, 'main') }}</th>
+                                            <th>{{ 'upload.table.entity'|trans({}, 'main') }}</th>
+                                            <th>{{ 'upload.table.error'|trans({}, 'main') }}</th>
+                                        </tr>
+                                        {% for i in paginator %}
+
+                                            <tr>
+                                                <td>{{ i.line + 1 }}</td>
+                                                <td>
+                                                    {% if i.status == 1 %}
+                                                        {{ 'upload.table.stat.new'|trans({}, 'main') }}
+                                                    {% elseif i.status == 2 %}
+                                                        {{ 'upload.table.stat.update'|trans({}, 'main') }}
+                                                    {% elseif i.status == 3 %}
+                                                        {{ 'upload.table.stat.error'|trans({}, 'main') }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if i.foreignId %}
+                                                        <a href="{{ admin.generateUrl('edit', {'id': i.foreignId}) }}">
+                                                            {{ 'upload.table.edit'|trans({}, 'main') }}
+                                                        </a>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% set error_message = i.messageEncode %}
+                                                    {% if error_message|length %}
+                                                        {% for i in error_message %}
+                                                            {{ i }}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <h1 id="head_h1">{{ 'upload.log'|trans({}, 'main') }}</h1>
-
-        <div class="status">
-            <a {{ app.request.get('type') == 'all' ? 'class="active"' : '' }}
-                    href="?page={{ app.request.get('page', 1) }}&type=all">
-                Все
-            </a> |
-            <a {{ app.request.get('type') == 'success' ? 'class="active"' : '' }}
-                    href="?page={{ app.request.get('page', 1) }}&type=success">
-                Успешно загруженные
-            </a> |
-            <a {{ app.request.get('type') == 'new' ? 'class="active"' : '' }}
-                    href="?page={{ app.request.get('page', 1) }}&type=new">
-                Новые
-            </a> |
-            <a {{ app.request.get('type') == 'update' ? 'class="active"' : '' }}
-                    href="?page={{ app.request.get('page', 1) }}&type=update">
-                Обновленные
-            </a> |
-            <a {{ app.request.get('type') == 'error' ? 'class="active"' : '' }}
-                    href="?page={{ app.request.get('page', 1) }}&type=error">
-                С ошибкой
-            </a>
-        </div>
-
-        {{ pagerfanta(paginator) }}
-        <table class="table">
-            <tr>
-                <th>{{ 'upload.table.line'|trans({}, 'main') }}</th>
-                <th>{{ 'upload.table.status'|trans({}, 'main') }}</th>
-                <th>{{ 'upload.table.entity'|trans({}, 'main') }}</th>
-                <th>{{ 'upload.table.error'|trans({}, 'main') }}</th>
-            </tr>
-            {% for i in paginator %}
-
-                <tr>
-                    <td>{{ i.line + 1 }}</td>
-                    <td>
-                        {% if i.status == 1 %}
-                            {{ 'upload.table.stat.new'|trans({}, 'main') }}
-                        {% elseif i.status == 2 %}
-                            {{ 'upload.table.stat.update'|trans({}, 'main') }}
-                        {% elseif i.status == 3 %}
-                            {{ 'upload.table.stat.error'|trans({}, 'main') }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if i.foreignId %}
-                            <a href="{{ admin.generateUrl('edit', {'id': i.foreignId}) }}">
-                                {{ 'upload.table.edit'|trans({}, 'main') }}
-                            </a>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% set error_message = i.messageEncode %}
-                        {% if error_message|length %}
-                            {% for i in error_message %}
-                                {{ i }}
-                            {% endfor %}
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
     {% endif %}
 {% endblock %}

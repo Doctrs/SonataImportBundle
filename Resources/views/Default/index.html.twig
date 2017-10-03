@@ -2,27 +2,49 @@
 
 
 {% block form %}
-    <h1>{{ 'index.h1'|trans({}, 'main') }}</h1>
-    {{ form(form) }}
-    <h2>{{ 'index.h2'|trans({}, 'main') }}</h2>
-    <table class="table">
-        <tr>
-            <th>
-                {{ 'index.table.column'|trans({}, 'main') }}
-            </th>
-            <th>
-                {{ 'index.table.name'|trans({}, 'main') }}
-            </th>
-        </tr>
-        {% for key, i in builder %}
-            <tr>
-                <td>
-                    {{ letters[key] }}
-                </td>
-                <td>
-                    {{ i }}
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h4 class="box-title">
+                                {{ 'index.h1'|trans({}, 'main') }}
+                            </h4>
+                        </div>
+                        <div class="box-body">
+                            <div class="sonata-ba-collapsed-fields">
+                                {{ form(form) }}
+                            </div>
+                        </div>
+                        <div class="box-header">
+                            <h4>{{ 'index.h2'|trans({}, 'main') }}</h4>
+                        </div>
+                        <div class="box-body">
+                        <table class="table">
+                            <tr>
+                                <th>
+                                    {{ 'index.table.column'|trans({}, 'main') }}
+                                </th>
+                                <th>
+                                    {{ 'index.table.name'|trans({}, 'main') }}
+                                </th>
+                            </tr>
+                            {% for key, i in builder %}
+                                <tr>
+                                    <td>
+                                        {{ letters[key] }}
+                                    </td>
+                                    <td>
+                                        {{ i }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

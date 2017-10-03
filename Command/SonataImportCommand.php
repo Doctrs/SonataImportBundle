@@ -25,7 +25,7 @@ class SonataImportCommand extends ContainerAwareCommand{
 
     protected function configure() {
         $this
-            ->setName('promoatlas:sonata:import')
+            ->setName('doctrs:sonata:import')
             ->setDescription('Import data to sonata from CSV')
             ->addArgument('csv_file', InputArgument::REQUIRED, 'id CsvFile entity')
             ->addArgument('admin_code', InputArgument::REQUIRED, 'code to sonata admin bundle')
@@ -67,7 +67,8 @@ class SonataImportCommand extends ContainerAwareCommand{
             /** @var AbstractAdmin $instance */
             $instance = $pool->getInstance($adminCode);
             $entityClass = $instance->getClass();
-            $identifier = $instance->getIdParameter();
+            $meta = $this->em->getClassMetadata($entityClass);
+            $identifier = $meta->getSingleIdentifierFieldName();
             $exportFields = $instance->getExportFields();
             $form = $instance->getFormBuilder();
             foreach ($fileLoader->getIteration() as $line => $data) {

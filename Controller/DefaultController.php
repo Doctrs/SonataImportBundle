@@ -41,7 +41,7 @@ class DefaultController extends CRUDController {
                 $em->flush($fileEntity);
 
                 $command = sprintf(
-                    '/usr/bin/php %s/console promoatlas:sonata:import %d "%s" "%s" > /dev/null 2>&1 &',
+                    '/usr/bin/php %s/console doctrs:sonata:import %d "%s" "%s" > /dev/null 2>&1 &',
                     $this->get('kernel')->getRootDir(),
                     $fileEntity->getId(),
                     $this->admin->getCode(),
