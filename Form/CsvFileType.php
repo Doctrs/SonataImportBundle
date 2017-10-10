@@ -31,17 +31,16 @@ class CsvFileType extends AbstractType implements ContainerAwareInterface
     {
         $builder
             ->add('file', FileType::class, [
-                'label' => 'File'
+                'label' => 'form.file'
             ])
-            ->add('submit', SubmitType::class)
         ;
 
         $default_encode = $this->container->getParameter('doctrs_sonata_import.encode.default');
         $encode_list = $this->container->getParameter('doctrs_sonata_import.encode.list');
-
         if(!count($encode_list)){
             $builder->add('encode', HiddenType::class, [
-                'data' => $default_encode
+                'data' => $default_encode,
+                'label' => 'form.encode'
             ]);
         } else {
             $el = [];
@@ -50,9 +49,28 @@ class CsvFileType extends AbstractType implements ContainerAwareInterface
             }
             $builder->add('encode', ChoiceType::class, [
                 'choices' => $el,
-                'data' => $default_encode
+                'data' => $default_encode,
+                'label' => 'form.encode'
             ]);
         }
+
+        $loader = [];
+        $loaders_list = $this->container->getParameter('doctrs_sonata_import.class_loaders');
+        foreach($loaders_list as $key => $item){
+            $loader[$key] = $item['name'];
+        }
+        $builder->add('loaderClass', ChoiceType::class, [
+            'choices' => $loader,
+            'label' => 'form.loader_class'
+        ]);
+        $builder
+            ->add('submit', SubmitType::class, [
+                'label' => 'form.submit',
+                'attr' => [
+                    'class' => 'btn btn-success'
+                ]
+            ])
+        ;
     }
 
     /**
@@ -61,7 +79,8 @@ class CsvFileType extends AbstractType implements ContainerAwareInterface
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Doctrs\SonataImportBundle\Entity\CsvFile'
+            'data_class' => 'Doctrs\SonataImportBundle\Entity\CsvFile',
+            'translation_domain' => 'DoctrsSonataImportBundle'
         ));
     }
 

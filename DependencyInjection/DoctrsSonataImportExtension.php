@@ -42,8 +42,8 @@ class DoctrsSonataImportExtension extends Extension
                 $container->get('kernel')->getRootDir() . '/../web/uploads'
         );
         $container->setParameter(
-            'doctrs_sonata_import.class_loader',
-            $config['class_loader']
+            'doctrs_sonata_import.class_loaders',
+            $config['class_loaders']
         );
         if(!isset($config['encode'])){
             $config['encode'] = [

@@ -53,6 +53,13 @@ class CsvFile
     /**
      * @var string
      *
+     * @ORM\Column(name="loader_class", type="string")
+     */
+    private $loaderClass;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="status", type="integer")
      */
     private $status;
@@ -168,6 +175,23 @@ class CsvFile
      */
     public function getStatus(){
         return $this->status;
+    }
+
+    /**
+     * @param $loaderClass
+     * @return $this
+     */
+    public function setLoaderClass($loaderClass){
+        $this->loaderClass = $loaderClass;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLoaderClass(){
+        return $this->loaderClass;
     }
 
     /**

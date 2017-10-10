@@ -1,3 +1,9 @@
+
+form:
+  file: 'File'
+  encode: 'Encode'
+  loader_class: 'Type of file'
+  submit: 'Submit'
 index:
   h1: 'Import'
   h2: 'load Format'

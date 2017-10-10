@@ -9,13 +9,13 @@
                         <div class="box box-primary">
                             <div class="box-header">
                                 <h4 id="head_h1" class="box-title">
-                                    {{ 'upload.h1.load'|trans({}, 'main') }}
+                                    {{ 'upload.h1.load'|trans({}, 'DoctrsSonataImportBundle') }}
                                 </h4>
                             </div>
                             <div class="box-body">
                                 <div class="sonata-ba-collapsed-fields">
                                     <div id="uploading">
-                                        {{ 'upload.upload_entity'|trans({}, 'main') }} <span id="count">0</span>
+                                        {{ 'upload.upload_entity'|trans({}, 'DoctrsSonataImportBundle') }} <span id="count">0</span>
                                     </div>
                                 </div>
                             </div>
@@ -38,12 +38,12 @@
                         $('#count').html(data.count);
                         switch(data.status){
                             case 2:
-                                $('#head_h1').html('{{ 'upload.h1.success'|trans({}, 'main') }}');
+                                $('#head_h1').html('{{ 'upload.h1.success'|trans({}, 'DoctrsSonataImportBundle') }}');
                                 window.location.reload();
                                 break;
                             case 3:
-                                $('#head_h1').html('{{ 'upload.h1.error'|trans({}, 'main') }}');
-                                $('#uploading').after('<div class="error">{{ 'upload.error'|trans({}, 'main') }} ' + data.error + '</div>');
+                                $('#head_h1').html('{{ 'upload.h1.error'|trans({}, 'DoctrsSonataImportBundle') }}');
+                                $('#uploading').after('<div class="error">{{ 'upload.error'|trans({}, 'DoctrsSonataImportBundle') }} ' + data.error + '</div>');
                                 window.location.reload();
                                 break;
                             default:
@@ -53,7 +53,7 @@
                         }
                     },
                     'error': function(){
-                        alert('{{ 'upload.error'|trans({}, 'main') }}');
+                        alert('{{ 'upload.error'|trans({}, 'DoctrsSonataImportBundle') }}');
                     }
                 });
             }
@@ -75,21 +75,21 @@
 
                                 {% if csvFile.status == 3 %}
                                     <h4 id="head_h1" class="box-title" style="display: block">
-                                        {{ 'upload.h1.error'|trans({}, 'main') }}
+                                        {{ 'upload.h1.error'|trans({}, 'DoctrsSonataImportBundle') }}
                                     </h4>
-                                    {{ 'upload.error'|trans({}, 'main') }}: {{ csvFile.message }}
+                                    {{ 'upload.error'|trans({}, 'DoctrsSonataImportBundle') }}: {{ csvFile.message }}
                                 {% else %}
                                     <h4 id="head_h1" class="box-title">
-                                        {{ 'upload.h1.success'|trans({}, 'main') }}
+                                        {{ 'upload.h1.success'|trans({}, 'DoctrsSonataImportBundle') }}
                                     </h4>
                                 {% endif %}
                             </div>
                             <div class="box-body">
                                 <div class="sonata-ba-collapsed-fields">
                                     <div id="uploading">
-                                        {{ 'upload.upload_entity'|trans({}, 'main') }}<span id="count">{{ countImport }}</span>
+                                        {{ 'upload.upload_entity'|trans({}, 'DoctrsSonataImportBundle') }}<span id="count">{{ countImport }}</span>
                                     </div>
-                                    <h4 id="head_h1">{{ 'upload.log'|trans({}, 'main') }}</h4>
+                                    <h4 id="head_h1">{{ 'upload.log'|trans({}, 'DoctrsSonataImportBundle') }}</h4>
 
                                     <div class="status">
                                         <a {{ app.request.get('type') == 'all' ? 'class="active"' : '' }}
@@ -117,10 +117,10 @@
                                     {{ pagerfanta(paginator) }}
                                     <table class="table">
                                         <tr>
-                                            <th>{{ 'upload.table.line'|trans({}, 'main') }}</th>
-                                            <th>{{ 'upload.table.status'|trans({}, 'main') }}</th>
-                                            <th>{{ 'upload.table.entity'|trans({}, 'main') }}</th>
-                                            <th>{{ 'upload.table.error'|trans({}, 'main') }}</th>
+                                            <th>{{ 'upload.table.line'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                            <th>{{ 'upload.table.status'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                            <th>{{ 'upload.table.entity'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                            <th>{{ 'upload.table.error'|trans({}, 'DoctrsSonataImportBundle') }}</th>
                                         </tr>
                                         {% for i in paginator %}
 
@@ -128,17 +128,17 @@
                                                 <td>{{ i.line + 1 }}</td>
                                                 <td>
                                                     {% if i.status == 1 %}
-                                                        {{ 'upload.table.stat.new'|trans({}, 'main') }}
+                                                        {{ 'upload.table.stat.new'|trans({}, 'DoctrsSonataImportBundle') }}
                                                     {% elseif i.status == 2 %}
-                                                        {{ 'upload.table.stat.update'|trans({}, 'main') }}
+                                                        {{ 'upload.table.stat.update'|trans({}, 'DoctrsSonataImportBundle') }}
                                                     {% elseif i.status == 3 %}
-                                                        {{ 'upload.table.stat.error'|trans({}, 'main') }}
+                                                        {{ 'upload.table.stat.error'|trans({}, 'DoctrsSonataImportBundle') }}
                                                     {% endif %}
                                                 </td>
                                                 <td>
                                                     {% if i.foreignId %}
                                                         <a href="{{ admin.generateUrl('edit', {'id': i.foreignId}) }}">
-                                                            {{ 'upload.table.edit'|trans({}, 'main') }}
+                                                            {{ 'upload.table.edit'|trans({}, 'DoctrsSonataImportBundle') }}
                                                         </a>
                                                     {% endif %}
                                                 </td>

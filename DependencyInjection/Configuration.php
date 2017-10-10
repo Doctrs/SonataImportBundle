@@ -34,8 +34,17 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('upload_dir')
                     ->defaultValue(null)
                 ->end()
-                ->scalarNode('class_loader')
-                    ->defaultValue('Doctrs\SonataImportBundle\Loaders\CsvFileLoader')
+                ->arrayNode('class_loaders')
+                    ->defaultValue([[
+                        'name' => 'CSV',
+                        'class' => 'Doctrs\SonataImportBundle\Loaders\CsvFileLoader'
+                    ]])
+                        ->prototype('array')
+                        ->children()
+                            ->scalarNode('name')->end()
+                            ->scalarNode('class')->end()
+                        ->end()
+                    ->end()
                 ->end()
                 ->arrayNode('encode')
                     ->children()

@@ -41,11 +41,12 @@ class DefaultController extends CRUDController {
                 $em->flush($fileEntity);
 
                 $command = sprintf(
-                    '/usr/bin/php %s/console doctrs:sonata:import %d "%s" "%s" > /dev/null 2>&1 &',
+                    '/usr/bin/php %s/console doctrs:sonata:import %d "%s" "%s" %d > /dev/null 2>&1 &',
                     $this->get('kernel')->getRootDir(),
                     $fileEntity->getId(),
                     $this->admin->getCode(),
-                    $fileEntity->getEncode() ? $fileEntity->getEncode() : 'utf8'
+                    $fileEntity->getEncode() ? $fileEntity->getEncode() : 'utf8',
+                    $fileEntity->getLoaderClass()
                 );
 
                 $process = new Process($command);

@@ -30,6 +30,7 @@ class SonataImportCommand extends ContainerAwareCommand{
             ->addArgument('csv_file', InputArgument::REQUIRED, 'id CsvFile entity')
             ->addArgument('admin_code', InputArgument::REQUIRED, 'code to sonata admin bundle')
             ->addArgument('encode', InputArgument::OPTIONAL, 'file encode')
+            ->addArgument('file_loader', InputArgument::OPTIONAL, 'number of loader class')
         ;
     }
 
@@ -39,10 +40,14 @@ class SonataImportCommand extends ContainerAwareCommand{
         $csvFileId = $input->getArgument('csv_file');
         $adminCode = $input->getArgument('admin_code');
         $encode = strtolower($input->getArgument('encode'));
+        $fileLoaderId = $input->getArgument('file_loader');
 
         /** @var CsvFile $csvFile */
         $csvFile = $this->em->getRepository('DoctrsSonataImportBundle:CsvFile')->find($csvFileId);
-        $fileLoader = $this->getContainer()->getParameter('doctrs_sonata_import.class_loader');
+        $fileLoaders = $this->getContainer()->getParameter('doctrs_sonata_import.class_loaders');
+        $fileLoader = isset($fileLoaders[$fileLoaderId], $fileLoaders[$fileLoaderId]['class']) ?
+            $fileLoaders[$fileLoaderId]['class'] :
+            null;
 
         if(!class_exists($fileLoader)){
             $csvFile->setStatus(CsvFile::STATUS_ERROR);
@@ -60,7 +65,6 @@ class SonataImportCommand extends ContainerAwareCommand{
 
 
         try {
-            $fileLoader = new CsvFileLoader();
             $fileLoader->setFile(new File($csvFile->getFile()));
 
             $pool = $this->getContainer()->get('sonata.admin.pool');

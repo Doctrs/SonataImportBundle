@@ -35,7 +35,9 @@ doctrs_sonata_import:
         - { name: center_point, class: doctrs.form_format.point}
         - { name: city_autocomplete, class: doctrs.form_format.city_pa}
     upload_dir: %kernel.root_dir%/../web/uploads    
-    class_loader: Doctrs\SonataImportBundle\Loaders\CsvFileLoader
+    class_loaders:
+        - { name: CSV, class: Doctrs\SonataImportBundle\Loaders\CsvFileLoader}
+        - { name: XLS, class: AppBundle\Loader\Doctrs\XlsFileLoader}
     encode:
         default: utf8
         list:
