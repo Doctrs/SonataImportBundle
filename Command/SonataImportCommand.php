@@ -4,7 +4,7 @@ namespace Doctrs\SonataImportBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
-use Doctrs\SonataImportBundle\Entity\CsvFile;
+use Doctrs\SonataImportBundle\Entity\UploadFile;
 use Doctrs\SonataImportBundle\Entity\ImportLog;
 use Doctrs\SonataImportBundle\Loaders\CsvFileLoader;
 use Doctrs\SonataImportBundle\Loaders\FileLoaderInterface;
@@ -27,7 +27,7 @@ class SonataImportCommand extends ContainerAwareCommand{
         $this
             ->setName('doctrs:sonata:import')
             ->setDescription('Import data to sonata from CSV')
-            ->addArgument('csv_file', InputArgument::REQUIRED, 'id CsvFile entity')
+            ->addArgument('csv_file', InputArgument::REQUIRED, 'id UploadFile entity')
             ->addArgument('admin_code', InputArgument::REQUIRED, 'code to sonata admin bundle')
             ->addArgument('encode', InputArgument::OPTIONAL, 'file encode')
             ->addArgument('file_loader', InputArgument::OPTIONAL, 'number of loader class')
@@ -37,35 +37,35 @@ class SonataImportCommand extends ContainerAwareCommand{
     protected function execute(InputInterface $input, OutputInterface $output) {
 
         $this->em = $this->getContainer()->get('doctrine')->getManager();
-        $csvFileId = $input->getArgument('csv_file');
+        $uploadFileId = $input->getArgument('csv_file');
         $adminCode = $input->getArgument('admin_code');
         $encode = strtolower($input->getArgument('encode'));
         $fileLoaderId = $input->getArgument('file_loader');
 
-        /** @var CsvFile $csvFile */
-        $csvFile = $this->em->getRepository('DoctrsSonataImportBundle:CsvFile')->find($csvFileId);
+        /** @var UploadFile $uploadFile */
+        $uploadFile = $this->em->getRepository('DoctrsSonataImportBundle:UploadFile')->find($uploadFileId);
         $fileLoaders = $this->getContainer()->getParameter('doctrs_sonata_import.class_loaders');
         $fileLoader = isset($fileLoaders[$fileLoaderId], $fileLoaders[$fileLoaderId]['class']) ?
             $fileLoaders[$fileLoaderId]['class'] :
             null;
 
         if(!class_exists($fileLoader)){
-            $csvFile->setStatus(CsvFile::STATUS_ERROR);
-            $csvFile->setMessage('class_loader not found');
-            $this->em->flush($csvFile);
+            $uploadFile->setStatus(UploadFile::STATUS_ERROR);
+            $uploadFile->setMessage('class_loader not found');
+            $this->em->flush($uploadFile);
             return;
         }
         $fileLoader = new $fileLoader();
         if(!$fileLoader instanceof FileLoaderInterface){
-            $csvFile->setStatus(CsvFile::STATUS_ERROR);
-            $csvFile->setMessage('class_loader must be instanceof "FileLoaderInterface"');
-            $this->em->flush($csvFile);
+            $uploadFile->setStatus(UploadFile::STATUS_ERROR);
+            $uploadFile->setMessage('class_loader must be instanceof "FileLoaderInterface"');
+            $this->em->flush($uploadFile);
             return;
         }
 
 
         try {
-            $fileLoader->setFile(new File($csvFile->getFile()));
+            $fileLoader->setFile(new File($uploadFile->getFile()));
 
             $pool = $this->getContainer()->get('sonata.admin.pool');
             /** @var AbstractAdmin $instance */
@@ -80,7 +80,7 @@ class SonataImportCommand extends ContainerAwareCommand{
                 $log = new ImportLog();
                 $log
                     ->setLine($line)
-                    ->setCsvFile($csvFile)
+                    ->setUploadFile($uploadFile)
                 ;
 
                 $entity = new $entityClass();
@@ -151,8 +151,8 @@ class SonataImportCommand extends ContainerAwareCommand{
                 $this->em->persist($log);
                 $this->em->flush($log);
             }
-            $csvFile->setStatus(CsvFile::STATUS_SUCCESS);
-            $this->em->flush($csvFile);
+            $uploadFile->setStatus(UploadFile::STATUS_SUCCESS);
+            $this->em->flush($uploadFile);
         } catch(\Exception $e){
             /**
              * Данный хак нужен в случае бросания ORMException
@@ -164,12 +164,12 @@ class SonataImportCommand extends ContainerAwareCommand{
                     $this->em->getConnection(),
                     $this->em->getConfiguration()
                 );
-                $csvFile = $this->em->getRepository('DoctrsSonataImportBundle:CsvFile')->find($csvFileId);
+                $uploadFile = $this->em->getRepository('DoctrsSonataImportBundle:UploadFile')->find($uploadFileId);
             }
 
-            $csvFile->setStatus(CsvFile::STATUS_ERROR);
-            $csvFile->setMessage($e->getMessage());
-            $this->em->flush($csvFile);
+            $uploadFile->setStatus(UploadFile::STATUS_ERROR);
+            $uploadFile->setMessage($e->getMessage());
+            $this->em->flush($uploadFile);
         }
     }
 

@@ -57,9 +57,9 @@ class ImportLog
     /**
      * @var string
      *
-     * @ORM\ManyToOne(targetEntity="Doctrs\SonataImportBundle\Entity\CsvFile", inversedBy="id")
+     * @ORM\ManyToOne(targetEntity="Doctrs\SonataImportBundle\Entity\UploadFile", inversedBy="id")
      */
-    private $csvFile;
+    private $uploadFile;
 
     /**
      * @var integer
@@ -166,26 +166,26 @@ class ImportLog
     }
 
     /**
-     * Set csvFile
+     * Set uploadFile
      *
-     * @param string $csvFile
+     * @param string $uploadFile
      * @return ImportLog
      */
-    public function setCsvFile($csvFile)
+    public function setUploadFile($uploadFile)
     {
-        $this->csvFile = $csvFile;
+        $this->uploadFile = $uploadFile;
 
         return $this;
     }
 
     /**
-     * Get csvFile
+     * Get uploadFile
      *
      * @return string 
      */
-    public function getCsvFile()
+    public function getUploadFile()
     {
-        return $this->csvFile;
+        return $this->uploadFile;
     }
 
 

@@ -18,7 +18,7 @@ class ImportLogType extends AbstractType
             ->add('status')
             ->add('message')
             ->add('line')
-            ->add('csvFile')
+            ->add('uploadFile')
         ;
     }
     

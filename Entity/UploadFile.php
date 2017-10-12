@@ -6,13 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
- * CsvFile
+ * UploadFile
  *
  * @ORM\Table("ext_sonata_import_file")
  * @ORM\Entity(repositoryClass="Doctrs\SonataImportBundle\Repository\DefaultRepository")
  * @ORM\HasLifecycleCallbacks()
  */
-class CsvFile
+class UploadFile
 {
 
     const STATUS_LOAD = 1;
@@ -96,7 +96,7 @@ class CsvFile
      * Set file
      *
      * @param string $file
-     * @return CsvFile
+     * @return UploadFile
      */
     public function setFile($file)
     {
@@ -128,7 +128,7 @@ class CsvFile
 
     /**
      * @param $encode
-     * @return CsvFile
+     * @return UploadFile
      */
     public function setEncode($encode){
         $this->encode = $encode;
@@ -145,7 +145,7 @@ class CsvFile
 
     /**
      * @param $message
-     * @return CsvFile
+     * @return UploadFile
      */
     public function setMessage($message){
         $this->message = $message;
@@ -162,7 +162,7 @@ class CsvFile
 
     /**
      * @param $status
-     * @return CsvFile
+     * @return UploadFile
      */
     public function setStatus($status){
         $this->status = $status;
@@ -192,6 +192,13 @@ class CsvFile
      */
     public function getLoaderClass(){
         return $this->loaderClass;
+    }
+
+    public function move($uploadDir){
+        $file = $this->getFile();
+        $fileName = md5(uniqid() . time()) . '.' . $file->guessExtension();
+        $file->move($uploadDir, $fileName);
+        $this->setFile($uploadDir . '/' . $fileName);
     }
 
     /**

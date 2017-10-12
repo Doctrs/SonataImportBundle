@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class CsvFileType extends AbstractType
+class UploadFileType extends AbstractType
 {
     use ContainerAwareTrait;
 
@@ -75,7 +75,7 @@ class CsvFileType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Doctrs\SonataImportBundle\Entity\CsvFile',
+            'data_class' => 'Doctrs\SonataImportBundle\Entity\UploadFile',
             'translation_domain' => 'DoctrsSonataImportBundle'
         ));
     }
@@ -92,6 +92,6 @@ class CsvFileType extends AbstractType
      */
     public function getName()
     {
-        return 'doctrs_sonataadminbundle_csvfile';
+        return 'doctrs_sonataadminbundle_uploadfile';
     }
 }
