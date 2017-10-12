@@ -1,22 +1,24 @@
-# Установка
+# Installation
+
+Run
 
 ````sh
 composer require doctrs/sonata-import-bundle
 ````
 
-Добавляем бандл в `AppKernel.php`
+Register the bundle in your `AppKernel.php`
 
 ````php
 new Doctrs\SonataImportBundle\DoctrsSonataImportBundle()
 ````
 
-Данный бандл так же подтягивает `white-october/pagerfanta-bundle`. Если у вас его нет, то его тожде необхоидмо добавить в `AppKernel.php`
+If you have not bundle `white-october/pagerfanta-bundle` register this in `AppKernel.php` too.
 
 ```php
 new WhiteOctober\PagerfantaBundle\WhiteOctoberPagerfantaBundle(),
 ```
 
-Добавляем mapping в файл config.yml
+Add orm mapping in your config.yml
 
 ````yaml
 doctrine:
@@ -28,16 +30,16 @@ doctrine:
                 mappings:
                     DoctrsSonataImportBundle: ~
 ````
-и сами настройки бандла
+Add settings of bundle
 ```yaml
 doctrs_sonata_import:
-    mappings:
-        - { name: center_point, class: doctrs.form_format.point}
-        - { name: city_autocomplete, class: doctrs.form_format.city_pa}
+    #mappings:
+    #    - { name: center_point, class: doctrs.form_format.point}
+    #    - { name: city_autocomplete, class: doctrs.form_format.city_pa}
     upload_dir: %kernel.root_dir%/../web/uploads    
     class_loaders:
         - { name: CSV, class: Doctrs\SonataImportBundle\Loaders\CsvFileLoader}
-        - { name: XLS, class: AppBundle\Loader\Doctrs\XlsFileLoader}
+    #    - { name: XLS, class: AppBundle\Loader\Doctrs\XlsFileLoader}
     encode:
         default: utf8
         list:
@@ -46,24 +48,28 @@ doctrs_sonata_import:
             - koir8
 ```
 
-Создаем базу
+Update your database
 
 ```
 php app/console doctrine:migrations:diff
 php app/console doctrine:migrations:migrate
 ```
-Или, если нет миграций
+If you have not migrations run this
 ```
 php app/console doctrine:schema:update --force
 ```
 
-Установка бандла завершена
+Installation of bundle success
 
-## Изменение сущностей sonataAdminBundle
+## Change sonataAdminBundle entities
 
-Добавляем или изменяем метод `configureRoutes` в классах, на основе которых создается sonata admin
+Add or change methods `configureRoutes` and `getDashboardActions` in sonata admin classes
 
 ```php
+use Sonata\AdminBundle\Admin\AbstractAdmin;
+...
+class AnyClassAdmin extends AbstractAdmin {
+...
     protected function configureRoutes(RouteCollection $collection)
     {
         $collection->add('import', 'import', [
@@ -72,16 +78,11 @@ php app/console doctrine:schema:update --force
         $collection->add('upload', '{id}/upload', [
             '_controller' => 'DoctrsSonataImportBundle:Default:upload'
         ]);
+        $collection->add('importStatus', '{id}/upload/status', [
+            '_controller' => 'DoctrsSonataImportBundle:Default:importStatus'
+        ]);
     }
-```
-
-В каждый класс, который предстоит импортировать, нужно будет изменить метод соответствующим образом.
-
-По данным ссылкам можно переходить либо напрямую в URL, либо добавить ссылки на главную
-
-Для добавления ссылки на главной, можно изменить/добавить метод `getDashboardActions` следующим образом
-
-```php
+    ...
     public function getDashboardActions()
     {
         $actions = parent::getDashboardActions();
@@ -96,13 +97,14 @@ php app/console doctrine:schema:update --force
         return $actions;
     }
 ```
-Если у вас эти методы не определены в админ классах, то можно просто использовать трейт
+If you don't redefined these methods you can use trait
 
 ```php
 use Doctrs\SonataImportBundle\Admin\AdminImportTrait;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 ...
-class EntityAdmin extends AbstractAdmin {
+class AnyClassAdmin extends AbstractAdmin {
 ...
 use AdminImportTrait;
 ```
-Оба метода описанные выше добавленны в `AdminImportTrait`
+Both methods add in `AdminImportTrait`
