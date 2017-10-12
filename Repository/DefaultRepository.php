@@ -5,35 +5,26 @@ namespace Doctrs\SonataImportBundle\Repository;
 
 
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 class DefaultRepository extends EntityRepository{
 
-    public function pagerfanta(array $where = [], $getResult = false){
+    public function pagerfanta(Request $request){
         $sql = $this->createQueryBuilder('data');
         $sql->select('data');
-        if (sizeof($where)) {
-            foreach ($where as $key => $value) {
-                if(is_array($value)){
-                    if(!isset($value['dql'])){
-                        continue;
-                    }
-                    if(isset($value['bindParam']) && !is_array($value['bindParam'])){
-                        continue;
-                    }
-                    $sql->andWhere($value['dql']);
-                    if(isset($value['bindParam'])) {
-                        foreach ($value['bindParam'] as $key2 => $value2) {
-                            $sql->setParameter($key2, $value2);
-                        }
-                    }
-                } else {
-                    $sql->andWhere('data.' . $key . ' = :' . $key);
-                    $sql->setParameter($key, $value);
-                }
-            }
-        }
-        if($getResult){
-            return $sql->getQuery()->getResult();
+        switch($request->get('type', 'all')){
+            case 'success':
+                $sql->where('data.status = 1 or data.status = 2');
+                break;
+            case 'new':
+                $sql->where('data.status = 1');
+                break;
+            case 'update':
+                $sql->where('data.status = 2');
+                break;
+            case 'error':
+                $sql->where('data.status = 3');
+                break;
         }
         return $sql->getQuery();
     }

@@ -32,7 +32,7 @@
 
             function interval(){
                 $.ajax({
-                    'url': '{{ ajaxUrl }}',
+                    'url': '{{ admin.generateUrl('importStatus', {id: csvFile.id}) }}',
                     'dataType': 'JSON',
                     'success': function(data){
                         $('#count').html(data.count);

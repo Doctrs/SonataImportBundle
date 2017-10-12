@@ -20,17 +20,13 @@ class DefaultController extends CRUDController {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(Request $request) {
-        $em = $this->getDoctrine()->getManager();
         $fileEntity = new CsvFile();
         $form = $this->createForm(CsvFileType::class, $fileEntity, [
             'method' => 'POST'
         ]);
         $form->handleRequest($request);
 
-        $pool = $this->get('sonata.admin.pool');
-        /** @var AbstractAdmin $instance */
-        $instance = $pool->getInstance($this->admin->getCode());
-        $builder = $instance->getExportFields();
+        $builder = $this->get('sonata.admin.pool')->getInstance($this->admin->getCode())->getExportFields();
 
         if($form->isValid()){
             if(!$fileEntity->getFile()->getError()) {
@@ -41,8 +37,8 @@ class DefaultController extends CRUDController {
                 $file->move($upload_dir, $fileName);
                 $fileEntity->setFile($upload_dir . '/' . $fileName);
 
-                $em->persist($fileEntity);
-                $em->flush($fileEntity);
+                $this->getDoctrine()->getManager()->persist($fileEntity);
+                $this->getDoctrine()->getManager()->flush($fileEntity);
 
                 $command = sprintf(
                     '/usr/bin/php %s/console doctrs:sonata:import %d "%s" "%s" %d > /dev/null 2>&1 &',
@@ -75,45 +71,17 @@ class DefaultController extends CRUDController {
 
     /**
      * @param Request $request
-     * @param         $id
-     * @return JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @param CsvFile $csvFile
+     * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function uploadAction(Request $request, $id){
+    public function uploadAction(Request $request, CsvFile $csvFile){
         $em = $this->getDoctrine()->getManager();
-        $csvFile = $em->getRepository('DoctrsSonataImportBundle:CsvFile')->find($id);
-        if(!$csvFile){
-            return $this->redirect($this->admin->generateUrl('import'));
-        }
 
         $countImport = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->count([
             'csvFile' => $csvFile->getId()
         ]);
 
-        if($request->get('ajax')){
-            return new JsonResponse([
-                'status' => $csvFile->getStatus(),
-                'error' => $csvFile->getMessage(),
-                'count' => $countImport
-            ]);
-        }
-        $filter = [ 'csvFile' => $csvFile->getId() ];
-        switch($request->get('type', 'all')){
-            case 'success':
-                $filter['status'] = [
-                    'dql' => 'data.status = 1 or data.status = 2'
-                ];
-                break;
-            case 'new':
-                $filter['status'] = 1;
-                break;
-            case 'update':
-                $filter['status'] = 2;
-                break;
-            case 'error':
-                $filter['status'] = 3;
-                break;
-        }
-        $data = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->pagerfanta($filter);
+        $data = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->pagerfanta($request);
         $paginator = new Pagerfanta(new DoctrineORMAdapter($data));
         $paginator->setCurrentPage($request->get('page', 1));
 
@@ -124,13 +92,30 @@ class DefaultController extends CRUDController {
             'admin' => $this->admin,
             'countImport' => $countImport,
             'baseTemplate' => $this->getBaseTemplate(),
-            'ajaxUrl' => $this->admin->generateUrl('upload', [
-                'id' => $id,
-                'ajax' => true
-            ])
         ]);
     }
 
+
+    /**
+     * @param CsvFile $csvFile
+     * @return JsonResponse
+     */
+    public function importStatusAction(CsvFile $csvFile){
+        $countImport = $this->getDoctrine()->getManager()->getRepository('DoctrsSonataImportBundle:ImportLog')->count([
+            'csvFile' => $csvFile->getId()
+        ]);
+
+        return new JsonResponse([
+            'status' => $csvFile->getStatus(),
+            'error' => $csvFile->getMessage(),
+            'count' => $countImport
+        ]);
+    }
+
+    /**
+     * get array from A to ZZ
+     * @return array
+     */
     private function getLetterArray(){
         $array = range('A', 'Z');
         $letters = $array;

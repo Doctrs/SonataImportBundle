@@ -16,6 +16,9 @@ trait AdminImportTrait{
         $collection->add('upload', '{id}/upload', [
             '_controller' => 'DoctrsSonataImportBundle:Default:upload'
         ]);
+        $collection->add('importStatus', '{id}/upload/status', [
+            '_controller' => 'DoctrsSonataImportBundle:Default:importStatus'
+        ]);
     }
 
 

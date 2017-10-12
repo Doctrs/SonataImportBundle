@@ -4,6 +4,7 @@ namespace Doctrs\SonataImportBundle\Form\Type;
 
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -14,14 +15,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class CsvFileType extends AbstractType implements ContainerAwareInterface
+class CsvFileType extends AbstractType
 {
-    /** @var Container $container */
-    private $container;
-
-    public function setContainer(ContainerInterface $container = null) {
-        $this->container = $container;
-    }
+    use ContainerAwareTrait;
 
     /**
      * @param FormBuilderInterface $builder
