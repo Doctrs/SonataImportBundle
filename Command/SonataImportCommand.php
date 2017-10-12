@@ -8,7 +8,7 @@ use Doctrs\SonataImportBundle\Entity\CsvFile;
 use Doctrs\SonataImportBundle\Entity\ImportLog;
 use Doctrs\SonataImportBundle\Loaders\CsvFileLoader;
 use Doctrs\SonataImportBundle\Loaders\FileLoaderInterface;
-use Doctrs\SonataImportBundle\Service\ImportAbstract;
+use Doctrs\SonataImportBundle\Service\ImportInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
@@ -192,8 +192,8 @@ class SonataImportCommand extends ContainerAwareCommand{
          */
         foreach($mappings as $item){
             if($item['name'] === $type){
-                if($this->getContainer()->has($item['class']) && $this->getContainer()->get($item['class']) instanceof ImportAbstract){
-                    /** @var ImportAbstract $class */
+                if($this->getContainer()->has($item['class']) && $this->getContainer()->get($item['class']) instanceof ImportInterface){
+                    /** @var ImportInterface $class */
                     $class = $this->getContainer()->get($item['class']);
                     return $class->getFormatValue($value);
                 }

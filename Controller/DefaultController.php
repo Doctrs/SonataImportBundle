@@ -6,7 +6,7 @@ use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Doctrs\SonataImportBundle\Entity\CsvFile;
-use Doctrs\SonataImportBundle\Form\CsvFileType;
+use Doctrs\SonataImportBundle\Form\Type\CsvFileType;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,6 +15,10 @@ use Symfony\Component\Process\Process;
 
 class DefaultController extends CRUDController {
 
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $fileEntity = new CsvFile();
@@ -69,6 +73,11 @@ class DefaultController extends CRUDController {
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param         $id
+     * @return JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function uploadAction(Request $request, $id){
         $em = $this->getDoctrine()->getManager();
         $csvFile = $em->getRepository('DoctrsSonataImportBundle:CsvFile')->find($id);

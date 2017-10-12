@@ -2,6 +2,6 @@
 
 namespace Doctrs\SonataImportBundle\Service;
 
-interface ImportAbstract{
+interface ImportInterface{
     public function getFormatValue($value);
 }

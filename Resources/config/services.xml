@@ -7,7 +7,7 @@
     <services>
         <service id="doctrs_sonata_import" class="Doctrs\SonataImportBundle\Controller\DefaultController">
         </service>
-        <service id="Doctrs\SonataImportBundle\Form\CsvFileType" class="Doctrs\SonataImportBundle\Form\CsvFileType">
+        <service id="Doctrs\SonataImportBundle\Form\Type\CsvFileType" class="Doctrs\SonataImportBundle\Form\CsvFileType">
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>

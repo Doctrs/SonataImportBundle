@@ -1,6 +1,6 @@
 <?php
 
-namespace Doctrs\SonataImportBundle\Form;
+namespace Doctrs\SonataImportBundle\Form\Type;
 
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;

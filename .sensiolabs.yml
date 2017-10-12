@@ -1,0 +1,9 @@
+doctrs_sonata_import:
+    upload_dir: %kernel.root_dir%/../web/uploads
+    class_loaders:
+        - { name: CSV, class: Doctrs\SonataImportBundle\Loaders\CsvFileLoader}
+    encode:
+        default: utf8
+        list:
+            - cp1251
+            - utf8
