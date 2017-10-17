@@ -126,8 +126,6 @@ class DefaultController extends CRUDController {
             $fileEntity->getEncode() ? $fileEntity->getEncode() : 'utf8',
             $fileEntity->getLoaderClass()
         );
-        print_r($command);
-        die();
         $process = new Process($command);
         $process->run();
     }
