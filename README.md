@@ -3,8 +3,8 @@
 Add import to sonata admin bundle
 
 [![Build Status](https://scrutinizer-ci.com/g/Doctrs/SonataImportBundle/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Doctrs/SonataImportBundle/build-status/master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Doctrs/SonataImportBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Doctrs/SonataImportBundle/?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/9a073eb8-fdfe-4920-82ed-4256716febb8/mini.png)](https://insight.sensiolabs.com/projects/9a073eb8-fdfe-4920-82ed-4256716febb8)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Doctrs/SonataImportBundle/badges/quality-score.png?b=master&123)](https://scrutinizer-ci.com/g/Doctrs/SonataImportBundle/?branch=master)
   
   
 # Installation
