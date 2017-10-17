@@ -6,7 +6,7 @@ namespace Doctrs\SonataImportBundle\Loaders;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 
-class CsvFileLoader implements FileLoaderInterface{
+class CsvFileLoader implements FileLoaderInterface {
 
     /** @var File $file  */
     protected $file = null;
@@ -17,7 +17,7 @@ class CsvFileLoader implements FileLoaderInterface{
     }
 
     public function getIteration() {
-        if(!$this->file){
+        if (!$this->file) {
             throw new InvalidArgumentException('File not found');
         }
 

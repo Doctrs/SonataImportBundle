@@ -119,8 +119,8 @@ class UploadFile
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      */
-    public function prePersistUpdate(){
-        if(!$this->status){
+    public function prePersistUpdate() {
+        if (!$this->status) {
             $this->status = self::STATUS_LOAD;
         }
         $this->ts = new \DateTime();
@@ -130,7 +130,7 @@ class UploadFile
      * @param $encode
      * @return UploadFile
      */
-    public function setEncode($encode){
+    public function setEncode($encode) {
         $this->encode = $encode;
 
         return $this;
@@ -139,7 +139,7 @@ class UploadFile
     /**
      * @return string
      */
-    public function getEncode(){
+    public function getEncode() {
         return $this->encode;
     }
 
@@ -147,7 +147,7 @@ class UploadFile
      * @param $message
      * @return UploadFile
      */
-    public function setMessage($message){
+    public function setMessage($message) {
         $this->message = $message;
 
         return $this;
@@ -156,7 +156,7 @@ class UploadFile
     /**
      * @return string
      */
-    public function getMessage(){
+    public function getMessage() {
         return $this->message;
     }
 
@@ -164,7 +164,7 @@ class UploadFile
      * @param $status
      * @return UploadFile
      */
-    public function setStatus($status){
+    public function setStatus($status) {
         $this->status = $status;
 
         return $this;
@@ -173,7 +173,7 @@ class UploadFile
     /**
      * @return string
      */
-    public function getStatus(){
+    public function getStatus() {
         return $this->status;
     }
 
@@ -181,7 +181,7 @@ class UploadFile
      * @param $loaderClass
      * @return $this
      */
-    public function setLoaderClass($loaderClass){
+    public function setLoaderClass($loaderClass) {
         $this->loaderClass = $loaderClass;
 
         return $this;
@@ -190,11 +190,11 @@ class UploadFile
     /**
      * @return string
      */
-    public function getLoaderClass(){
+    public function getLoaderClass() {
         return $this->loaderClass;
     }
 
-    public function move($uploadDir){
+    public function move($uploadDir) {
         $file = $this->getFile();
         $fileName = md5(uniqid() . time()) . '.' . $file->guessExtension();
         $file->move($uploadDir, $fileName);
@@ -205,7 +205,7 @@ class UploadFile
      * @param $message
      * @return $this
      */
-    public function setStatusError($message){
+    public function setStatusError($message) {
         $this->setStatus(self::STATUS_ERROR);
         $this->setMessage($message);
         return $this;
