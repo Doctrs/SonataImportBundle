@@ -4,6 +4,7 @@ namespace Doctrs\SonataImportBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * UploadFile
@@ -39,7 +40,7 @@ class UploadFile
      * @var string
      *
      * @ORM\Column(name="file", type="string")
-     * @var File
+     * @var UploadedFile
      */
     private $file;
 
@@ -108,7 +109,7 @@ class UploadFile
     /**
      * Get file
      *
-     * @return File|null
+     * @return UploadedFile|null
      */
     public function getFile()
     {

@@ -14,6 +14,11 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class DoctrsSonataImportExtension extends Extension
 {
+
+    /**
+     * @var ContainerBuilder
+     */
+    private $container;
     /**
      * {@inheritdoc}
      */
@@ -32,6 +37,49 @@ class DoctrsSonataImportExtension extends Extension
      * @param ContainerBuilder $container
      */
     private function prepairConfig(array $config, ContainerBuilder $container){
+        $this->container = $container;
+
+        $this->prepareConfigMappings($config);
+        $this->prepareConfigEncode($config);
+        $this->prepareConfigUploadDir($config);
+
+        $parametersArray = [
+            'doctrs_sonata_import.mappings'         => $config['mappings'],
+            'doctrs_sonata_import.upload_dir'       => $config['upload_dir'],
+            'doctrs_sonata_import.class_loaders'    => $config['class_loaders'],
+            'doctrs_sonata_import.encode.default'   => $config['encode']['default'],
+            'doctrs_sonata_import.encode.list'      => $config['encode']['list']
+        ];
+
+        foreach($parametersArray as $parameterKey => $value){
+            $container->setParameter($parameterKey, $value);
+        }
+    }
+
+    /**
+     * @param array $config
+     */
+    private function prepareConfigUploadDir(array &$config){
+        $config['upload_dir'] = $config['upload_dir'] ?
+            $config['upload_dir'] : $this->container->get('kernel')->getRootDir() . '/../web/uploads';
+    }
+
+    /**
+     * @param array $config
+     */
+    private function prepareConfigEncode(array &$config){
+        if (!isset($config['encode'])) {
+            $config['encode'] = [
+                'default' => 'utf8',
+                'list' => []
+            ];
+        }
+    }
+
+    /**
+     * @param array $config
+     */
+    private function prepareConfigMappings(array &$config){
         $config['mappings'] = array_merge($config['mappings'], [[
             'name' => 'date',
             'class' => 'doctrs.type.datetime'
@@ -51,31 +99,5 @@ class DoctrsSonataImportExtension extends Extension
             'name' => 'choice',
             'class' => 'doctrs.type.entity'
         ]]);
-        $container->setParameter(
-            'doctrs_sonata_import.mappings',
-            $config['mappings']
-        );
-        $container->setParameter(
-            'doctrs_sonata_import.upload_dir',
-            $config['upload_dir'] ? $config['upload_dir'] : $container->get('kernel')->getRootDir() . '/../web/uploads'
-        );
-        $container->setParameter(
-            'doctrs_sonata_import.class_loaders',
-            $config['class_loaders']
-        );
-        if (!isset($config['encode'])) {
-            $config['encode'] = [
-                'default' => 'utf8',
-                'list' => []
-            ];
-        }
-        $container->setParameter(
-            'doctrs_sonata_import.encode.default',
-            $config['encode']['default']
-        );
-        $container->setParameter(
-            'doctrs_sonata_import.encode.list',
-            $config['encode']['list']
-        );
     }
 }
