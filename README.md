@@ -42,13 +42,19 @@ doctrine:
 Add settings of bundle
 ```yaml
 doctrs_sonata_import:
-    #mappings:
-    #    - { name: center_point, class: doctrs.form_format.point}
-    #    - { name: city_autocomplete, class: doctrs.form_format.city_pa}
+    mappings:
+    #   - { name: center_point, class: doctrs.form_format.point}
+    #   - { name: city_autocomplete, class: doctrs.form_format.city_pa}
+        - { name: date, class: doctrs.type.datetime}
+        - { name: datetime, class: doctrs.type.datetime}
+        - { name: boolean, class: doctrs.type.boolean}
+        - { name: integer, class: doctrs.type.integer}
+        - { name: entity, class: doctrs.type.entity}
+        - { name: choice, class: doctrs.type.entity}
     upload_dir: %kernel.root_dir%/../web/uploads    
     class_loaders:
         - { name: CSV, class: Doctrs\SonataImportBundle\Loaders\CsvFileLoader}
-    #    - { name: XLS, class: AppBundle\Loader\Doctrs\XlsFileLoader}
+    #   - { name: XLS, class: AppBundle\Loader\Doctrs\XlsFileLoader}
     encode:
         default: utf8
         list:

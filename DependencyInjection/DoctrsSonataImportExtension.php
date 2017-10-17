@@ -32,6 +32,25 @@ class DoctrsSonataImportExtension extends Extension
      * @param ContainerBuilder $container
      */
     private function prepairConfig(array $config, ContainerBuilder $container){
+        $config['mappings'] = array_merge($config['mappings'], [[
+            'name' => 'date',
+            'class' => 'doctrs.type.datetime'
+        ],[
+            'name' => 'datetime',
+            'class' => 'doctrs.type.datetime'
+        ],[
+            'name' => 'boolean',
+            'class' => 'doctrs.type.boolean'
+        ],[
+            'name' => 'integer',
+            'class' => 'doctrs.type.integer'
+        ],[
+            'name' => 'entity',
+            'class' => 'doctrs.type.entity'
+        ],[
+            'name' => 'choice',
+            'class' => 'doctrs.type.entity'
+        ]]);
         $container->setParameter(
             'doctrs_sonata_import.mappings',
             $config['mappings']

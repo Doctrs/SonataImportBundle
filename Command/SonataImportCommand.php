@@ -8,7 +8,9 @@ use Doctrs\SonataImportBundle\Entity\UploadFile;
 use Doctrs\SonataImportBundle\Entity\ImportLog;
 use Doctrs\SonataImportBundle\Loaders\CsvFileLoader;
 use Doctrs\SonataImportBundle\Loaders\FileLoaderInterface;
-use Doctrs\SonataImportBundle\Service\ImportInterface;
+use Doctrs\SonataImportBundle\Service\SonataImportType\AdminAbstractAwareInterface;
+use Doctrs\SonataImportBundle\Service\SonataImportType\FormBuilderAwareInterface;
+use Doctrs\SonataImportBundle\Service\SonataImportType\ImportInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
@@ -115,9 +117,8 @@ class SonataImportCommand extends ContainerAwareCommand{
                         $value = iconv($encode, 'utf8//TRANSLIT', $value);
                     }
                     try {
-                        $value = $this->setValue($value, $formBuilder, $instance);
                         $method = $this->getSetMethod($name);
-                        $entity->$method($value);
+                        $entity->$method($this->getValue($value, $formBuilder, $instance));
                     } catch (\Exception $e) {
                         $errors[] = $e->getMessage();
                         break;
@@ -175,13 +176,10 @@ class SonataImportCommand extends ContainerAwareCommand{
         return $method . str_replace(' ', '', ucfirst(join('', explode('_', $name))));
     }
 
-    protected function setValue($value, FormBuilderInterface $fieldDescription, AbstractAdmin $admin){
+    protected function getValue($value, FormBuilderInterface $formBuilder, AbstractAdmin $admin){
 
         $mappings = $this->getContainer()->getParameter('doctrs_sonata_import.mappings');
-
-        $originalValue = $value;
-        $field = $fieldDescription->getName();
-        $type = $fieldDescription->getType()->getName();
+        $type = $formBuilder->getType()->getName();
 
         /**
          * Проверяем кастомные типы форм на наличие в конфиге.
@@ -190,79 +188,21 @@ class SonataImportCommand extends ContainerAwareCommand{
         foreach($mappings as $item){
             if($item['name'] === $type){
                 if($this->getContainer()->has($item['class']) && $this->getContainer()->get($item['class']) instanceof ImportInterface){
-                    /** @var ImportInterface $class */
+                    /** @var \Doctrs\SonataImportBundle\Service\SonataImportType\ImportInterface $class */
                     $class = $this->getContainer()->get($item['class']);
+
+                    if($class instanceof AdminAbstractAwareInterface){
+                        $class->setAdminAbstract($admin);
+                    }
+                    if($class instanceof FormBuilderAwareInterface){
+                        $class->setFormBuilder($formBuilder);
+                    }
+
                     return $class->getFormatValue($value);
                 }
             }
         }
 
-        if ($type === 'date' || $type === 'datetime') {
-            $value = $value ? new \DateTime($value) : null;
-        }
-        if ($type === 'boolean') {
-            $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-        }
-        if ($type === 'integer') {
-            $value = (int)$value;
-        }
-
-        if (
-            (
-                $type === 'choice' &&
-                $fieldDescription->getOption('class')
-            ) || (
-                $type === 'entity' &&
-                $fieldDescription->getOption('class')
-            )
-        ) {
-            if(!$value){
-                return null;
-            }
-            /** @var \Doctrine\ORM\Mapping\ClassMetadata $metaData */
-            $metaData = $admin->getModelManager()
-                ->getEntityManager($admin->getClass())->getClassMetadata($admin->getClass());
-            $associations = $metaData->getAssociationNames();
-
-            if (!in_array($field, $associations)) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                        'Unknown association "%s", association does not exist in entity "%s", available associations are "%s".',
-                        $field,
-                        $admin->getClass(),
-                        implode(', ', $associations)
-                    )
-                );
-            }
-
-            $repo = $admin->getConfigurationPool()->getContainer()->get('doctrine')->getManager()
-                ->getRepository($fieldDescription->getOption('class'));
-
-            /**
-             * Если значение число, то пытаемся найти его по ID.
-             * Если значение не число, то ищем его по полю name
-             */
-            if(is_numeric($value)){
-                $value = $repo->find($value);
-            } else {
-                try {
-                    $value = $repo->findOneBy([
-                        'name' => $value
-                    ]);
-                } catch (ORMException $e) {
-                    throw new InvalidArgumentException('Field name not found');
-                }
-            }
-
-            if (!$value) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                        'Edit failed, object with id "%s" not found in association "%s".',
-                        $originalValue,
-                        $field)
-                );
-            }
-        }
-        return $value;
+        return (string)$value;
     }
 }
