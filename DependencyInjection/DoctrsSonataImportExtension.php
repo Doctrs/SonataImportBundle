@@ -36,7 +36,7 @@ class DoctrsSonataImportExtension extends Extension
      * @param array            $config
      * @param ContainerBuilder $container
      */
-    private function prepairConfig(array $config, ContainerBuilder $container){
+    private function prepairConfig(array $config, ContainerBuilder $container) {
         $this->container = $container;
 
         $this->prepareConfigMappings($config);
@@ -51,7 +51,7 @@ class DoctrsSonataImportExtension extends Extension
             'doctrs_sonata_import.encode.list'      => $config['encode']['list']
         ];
 
-        foreach($parametersArray as $parameterKey => $value){
+        foreach ($parametersArray as $parameterKey => $value) {
             $container->setParameter($parameterKey, $value);
         }
     }
@@ -59,7 +59,7 @@ class DoctrsSonataImportExtension extends Extension
     /**
      * @param array $config
      */
-    private function prepareConfigUploadDir(array &$config){
+    private function prepareConfigUploadDir(array &$config) {
         $config['upload_dir'] = $config['upload_dir'] ?
             $config['upload_dir'] : $this->container->get('kernel')->getRootDir() . '/../web/uploads';
     }
@@ -67,7 +67,7 @@ class DoctrsSonataImportExtension extends Extension
     /**
      * @param array $config
      */
-    private function prepareConfigEncode(array &$config){
+    private function prepareConfigEncode(array &$config) {
         if (!isset($config['encode'])) {
             $config['encode'] = [
                 'default' => 'utf8',
@@ -79,23 +79,23 @@ class DoctrsSonataImportExtension extends Extension
     /**
      * @param array $config
      */
-    private function prepareConfigMappings(array &$config){
+    private function prepareConfigMappings(array &$config) {
         $config['mappings'] = array_merge($config['mappings'], [[
             'name' => 'date',
             'class' => 'doctrs.type.datetime'
-        ],[
+        ], [
             'name' => 'datetime',
             'class' => 'doctrs.type.datetime'
-        ],[
+        ], [
             'name' => 'boolean',
             'class' => 'doctrs.type.boolean'
-        ],[
+        ], [
             'name' => 'integer',
             'class' => 'doctrs.type.integer'
-        ],[
+        ], [
             'name' => 'entity',
             'class' => 'doctrs.type.entity'
-        ],[
+        ], [
             'name' => 'choice',
             'class' => 'doctrs.type.entity'
         ]]);

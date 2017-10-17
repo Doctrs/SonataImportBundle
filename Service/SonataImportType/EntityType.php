@@ -21,11 +21,11 @@ class EntityType implements ImportInterface, AdminAbstractAwareInterface, FormBu
     private $formBuilder;
 
 
-    public function getFormatValue($value){
-        if(!$value){
+    public function getFormatValue($value) {
+        if (!$value) {
             return null;
         }
-        if(!$this->formBuilder->getOption('class')){
+        if (!$this->formBuilder->getOption('class')) {
             return $value;
         }
 
@@ -55,7 +55,7 @@ class EntityType implements ImportInterface, AdminAbstractAwareInterface, FormBu
          * Если значение число, то пытаемся найти его по ID.
          * Если значение не число, то ищем его по полю name
          */
-        if(is_numeric($value)){
+        if (is_numeric($value)) {
             $value = $repo->find($value);
         } else {
             try {
