@@ -191,10 +191,10 @@ class SonataImportCommand extends ContainerAwareCommand {
 
                     $class = $this->getContainer()->get($item['class']);
 
-                    if($class instanceof AdminAbstractAwareInterface){
+                    if ($class instanceof AdminAbstractAwareInterface) {
                         $class->setAdminAbstract($admin);
                     }
-                    if($class instanceof FormBuilderAwareInterface){
+                    if ($class instanceof FormBuilderAwareInterface) {
                         $class->setFormBuilder($formBuilder);
                     }
 
