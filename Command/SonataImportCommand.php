@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
-class SonataImportCommand extends ContainerAwareCommand{
+class SonataImportCommand extends ContainerAwareCommand {
 
     /** @var EntityManager $this->em  */
     protected $em;
@@ -46,16 +46,15 @@ class SonataImportCommand extends ContainerAwareCommand{
         $uploadFile = $this->em->getRepository('DoctrsSonataImportBundle:UploadFile')->find($uploadFileId);
         $fileLoaders = $this->getContainer()->getParameter('doctrs_sonata_import.class_loaders');
         $fileLoader = isset($fileLoaders[$fileLoaderId], $fileLoaders[$fileLoaderId]['class']) ?
-            $fileLoaders[$fileLoaderId]['class'] :
-            null;
+            $fileLoaders[$fileLoaderId]['class'] : null;
 
-        if(!class_exists($fileLoader)){
+        if (!class_exists($fileLoader)) {
             $uploadFile->setStatusError('class_loader not found');
             $this->em->flush($uploadFile);
             return;
         }
         $fileLoader = new $fileLoader();
-        if(!$fileLoader instanceof FileLoaderInterface){
+        if (!$fileLoader instanceof FileLoaderInterface) {
             $uploadFile->setStatusError('class_loader must be instanceof "FileLoaderInterface"');
             $this->em->flush($uploadFile);
             return;
@@ -124,7 +123,7 @@ class SonataImportCommand extends ContainerAwareCommand{
                     }
 
                 }
-                if(!count($errors)) {
+                if (!count($errors)) {
                     $validator = $this->getContainer()->get('validator');
                     $errors = $validator->validate($entity);
                 }
@@ -151,7 +150,7 @@ class SonataImportCommand extends ContainerAwareCommand{
             }
             $uploadFile->setStatus(UploadFile::STATUS_SUCCESS);
             $this->em->flush($uploadFile);
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             /**
              * Данный хак нужен в случае бросания ORMException
              * В случае бросания ORMException entity manager останавливается
@@ -175,7 +174,7 @@ class SonataImportCommand extends ContainerAwareCommand{
         return $method . str_replace(' ', '', ucfirst(join('', explode('_', $name))));
     }
 
-    protected function setValue($value, FormBuilderInterface $fieldDescription, AbstractAdmin $admin){
+    protected function setValue($value, FormBuilderInterface $fieldDescription, AbstractAdmin $admin) {
 
         $mappings = $this->getContainer()->getParameter('doctrs_sonata_import.mappings');
 
@@ -187,9 +186,9 @@ class SonataImportCommand extends ContainerAwareCommand{
          * Проверяем кастомные типы форм на наличие в конфиге.
          * В случае совпадения, получаем значение из класса, указанного в конфиге
          */
-        foreach($mappings as $item){
-            if($item['name'] === $type){
-                if($this->getContainer()->has($item['class']) && $this->getContainer()->get($item['class']) instanceof ImportInterface){
+        foreach ($mappings as $item) {
+            if ($item['name'] === $type) {
+                if ($this->getContainer()->has($item['class']) && $this->getContainer()->get($item['class']) instanceof ImportInterface) {
                     /** @var ImportInterface $class */
                     $class = $this->getContainer()->get($item['class']);
                     return $class->getFormatValue($value);
@@ -216,7 +215,7 @@ class SonataImportCommand extends ContainerAwareCommand{
                 $fieldDescription->getOption('class')
             )
         ) {
-            if(!$value){
+            if (!$value) {
                 return null;
             }
             /** @var \Doctrine\ORM\Mapping\ClassMetadata $metaData */
@@ -242,7 +241,7 @@ class SonataImportCommand extends ContainerAwareCommand{
              * Если значение число, то пытаемся найти его по ID.
              * Если значение не число, то ищем его по полю name
              */
-            if(is_numeric($value)){
+            if (is_numeric($value)) {
                 $value = $repo->find($value);
             } else {
                 try {

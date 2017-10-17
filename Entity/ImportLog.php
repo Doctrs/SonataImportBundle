@@ -138,7 +138,7 @@ class ImportLog
     /**
      * @return mixed
      */
-    public function messageEncode(){
+    public function messageEncode() {
         return json_decode($this->message);
     }
 
@@ -193,7 +193,7 @@ class ImportLog
      * @ORM\PreUpdate()
      * @ORM\PrePersist()
      */
-    public function prePersistUpdate(){
+    public function prePersistUpdate() {
         $this->ts = new \DateTime();
     }
 
@@ -201,7 +201,7 @@ class ImportLog
      * @param $foreignId
      * @return ImportLog
      */
-    public function setForeignId($foreignId){
+    public function setForeignId($foreignId) {
         $this->foreignId = $foreignId;
 
         return $this;
@@ -210,7 +210,7 @@ class ImportLog
     /**
      * @return int
      */
-    public function getForeignId(){
+    public function getForeignId() {
         return $this->foreignId;
     }
 

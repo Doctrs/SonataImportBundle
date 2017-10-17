@@ -35,7 +35,7 @@ class ImportLogType extends AbstractType
     /**
      * @return string
      */
-    public function getBlockPrefix(){
+    public function getBlockPrefix() {
         return $this->getName();
     }
 

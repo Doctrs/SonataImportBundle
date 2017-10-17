@@ -7,12 +7,12 @@ namespace Doctrs\SonataImportBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-class DefaultRepository extends EntityRepository{
+class DefaultRepository extends EntityRepository {
 
-    public function pagerfanta(Request $request){
+    public function pagerfanta(Request $request) {
         $sql = $this->createQueryBuilder('data');
         $sql->select('data');
-        switch($request->get('type', 'all')){
+        switch ($request->get('type', 'all')) {
             case 'success':
                 $sql->where('data.status = 1 or data.status = 2');
                 break;

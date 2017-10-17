@@ -31,21 +31,20 @@ class DoctrsSonataImportExtension extends Extension
      * @param array            $config
      * @param ContainerBuilder $container
      */
-    private function prepairConfig(array $config, ContainerBuilder $container){
+    private function prepairConfig(array $config, ContainerBuilder $container) {
         $container->setParameter(
             'doctrs_sonata_import.mappings',
             $config['mappings']
         );
         $container->setParameter(
             'doctrs_sonata_import.upload_dir',
-            $config['upload_dir'] ? $config['upload_dir'] :
-                $container->get('kernel')->getRootDir() . '/../web/uploads'
+            $config['upload_dir'] ? $config['upload_dir'] : $container->get('kernel')->getRootDir() . '/../web/uploads'
         );
         $container->setParameter(
             'doctrs_sonata_import.class_loaders',
             $config['class_loaders']
         );
-        if(!isset($config['encode'])){
+        if (!isset($config['encode'])) {
             $config['encode'] = [
                 'default' => 'utf8',
                 'list' => []

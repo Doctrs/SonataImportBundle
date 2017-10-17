@@ -33,14 +33,14 @@ class UploadFileType extends AbstractType
 
         $default_encode = $this->container->getParameter('doctrs_sonata_import.encode.default');
         $encode_list = $this->container->getParameter('doctrs_sonata_import.encode.list');
-        if(!count($encode_list)){
+        if (!count($encode_list)) {
             $builder->add('encode', HiddenType::class, [
                 'data' => $default_encode,
                 'label' => 'form.encode'
             ]);
         } else {
             $el = [];
-            foreach($encode_list as $item){
+            foreach ($encode_list as $item) {
                 $el[$item] = $item;
             }
             $builder->add('encode', ChoiceType::class, [
@@ -52,7 +52,7 @@ class UploadFileType extends AbstractType
 
         $loader = [];
         $loaders_list = $this->container->getParameter('doctrs_sonata_import.class_loaders');
-        foreach($loaders_list as $key => $item){
+        foreach ($loaders_list as $key => $item) {
             $loader[$key] = $item['name'];
         }
         $builder->add('loaderClass', ChoiceType::class, [
@@ -83,7 +83,7 @@ class UploadFileType extends AbstractType
     /**
      * @return string
      */
-    public function getBlockPrefix(){
+    public function getBlockPrefix() {
         return $this->getName();
     }
 

@@ -26,8 +26,8 @@ class DefaultController extends CRUDController {
         ]);
         $form->handleRequest($request);
 
-        if($form->isValid()){
-            if(!$fileEntity->getFile()->getError()) {
+        if ($form->isValid()) {
+            if (!$fileEntity->getFile()->getError()) {
                 $fileEntity->move($this->getParameter('doctrs_sonata_import.upload_dir'));
 
                 $this->getDoctrine()->getManager()->persist($fileEntity);
@@ -61,7 +61,7 @@ class DefaultController extends CRUDController {
      * @param UploadFile $uploadFile
      * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function uploadAction(Request $request, UploadFile $uploadFile){
+    public function uploadAction(Request $request, UploadFile $uploadFile) {
         $em = $this->getDoctrine()->getManager();
 
         $countImport = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->count([
@@ -87,7 +87,7 @@ class DefaultController extends CRUDController {
      * @param UploadFile $uploadFile
      * @return JsonResponse
      */
-    public function importStatusAction(UploadFile $uploadFile){
+    public function importStatusAction(UploadFile $uploadFile) {
         $countImport = $this->getDoctrine()->getManager()->getRepository('DoctrsSonataImportBundle:ImportLog')->count([
             'uploadFile' => $uploadFile->getId()
         ]);
@@ -103,10 +103,10 @@ class DefaultController extends CRUDController {
      * get array from A to ZZ
      * @return array
      */
-    private function getLetterArray(){
+    private function getLetterArray() {
         $array = range('A', 'Z');
         $letters = $array;
-        foreach($array as $first) {
+        foreach ($array as $first) {
             foreach ($array as $second) {
                 $letters[] = $first . $second;
             }
@@ -117,7 +117,7 @@ class DefaultController extends CRUDController {
     /**
      * @param UploadFile $fileEntity
      */
-    private function runCommand(UploadFile $fileEntity){
+    private function runCommand(UploadFile $fileEntity) {
         $command = sprintf(
             '/usr/bin/php %s/console doctrs:sonata:import %d "%s" "%s" %d > /dev/null 2>&1 &',
             $this->get('kernel')->getRootDir(),
