@@ -13,5 +13,13 @@
             </call>
             <tag name="form.type" />
         </service>
+        <service id="doctrs.type.integer" class="Doctrs\SonataImportBundle\Service\SonataImportType\IntegerType">
+        </service>
+        <service id="doctrs.type.boolean" class="Doctrs\SonataImportBundle\Service\SonataImportType\BooleanType">
+        </service>
+        <service id="doctrs.type.datetime" class="Doctrs\SonataImportBundle\Service\SonataImportType\DateType">
+        </service>
+        <service id="doctrs.type.entity" class="Doctrs\SonataImportBundle\Service\SonataImportType\EntityType">
+        </service>
     </services>
 </container>
