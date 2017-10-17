@@ -50,15 +50,13 @@ class SonataImportCommand extends ContainerAwareCommand{
             null;
 
         if(!class_exists($fileLoader)){
-            $uploadFile->setStatus(UploadFile::STATUS_ERROR);
-            $uploadFile->setMessage('class_loader not found');
+            $uploadFile->setStatusError('class_loader not found');
             $this->em->flush($uploadFile);
             return;
         }
         $fileLoader = new $fileLoader();
         if(!$fileLoader instanceof FileLoaderInterface){
-            $uploadFile->setStatus(UploadFile::STATUS_ERROR);
-            $uploadFile->setMessage('class_loader must be instanceof "FileLoaderInterface"');
+            $uploadFile->setStatusError('class_loader must be instanceof "FileLoaderInterface"');
             $this->em->flush($uploadFile);
             return;
         }
@@ -167,8 +165,7 @@ class SonataImportCommand extends ContainerAwareCommand{
                 $uploadFile = $this->em->getRepository('DoctrsSonataImportBundle:UploadFile')->find($uploadFileId);
             }
 
-            $uploadFile->setStatus(UploadFile::STATUS_ERROR);
-            $uploadFile->setMessage($e->getMessage());
+            $uploadFile->setStatusError($e->getMessage());
             $this->em->flush($uploadFile);
         }
     }

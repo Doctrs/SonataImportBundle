@@ -202,6 +202,16 @@ class UploadFile
     }
 
     /**
+     * @param $message
+     * @return $this
+     */
+    public function setStatusError($message){
+        $this->setStatus(self::STATUS_ERROR);
+        $this->setMessage($message);
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function __toString() {

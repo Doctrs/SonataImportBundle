@@ -3,7 +3,9 @@
 namespace Doctrs\SonataImportBundle\Admin;
 
 
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Route\RouteCollection;
+use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 
 trait AdminImportTrait{
 
@@ -24,6 +26,11 @@ trait AdminImportTrait{
 
     public function getDashboardActions()
     {
+        if(!$this instanceof AbstractAdmin){
+            throw new InvalidArgumentException(sprintf('Class "%s" must by instanceof "Sonata\AdminBundle\Admin\AbstractAdmin"',
+                get_class($this)
+            ));
+        }
         $actions = parent::getDashboardActions();
 
         $actions['import'] = array(
