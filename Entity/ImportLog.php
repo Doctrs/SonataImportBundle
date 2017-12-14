@@ -57,7 +57,7 @@ class ImportLog
     /**
      * @var string
      *
-     * @ORM\ManyToOne(targetEntity="Doctrs\SonataImportBundle\Entity\UploadFile", inversedBy="id")
+     * @ORM\ManyToOne(targetEntity="Doctrs\SonataImportBundle\Entity\UploadFile", inversedBy="importLog")
      */
     private $uploadFile;
 

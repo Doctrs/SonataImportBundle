@@ -72,6 +72,11 @@ class UploadFile
      */
     private $message;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Doctrs\SonataImportBundle\Entity\ImportLog", mappedBy="uploadFile")
+     */
+    private $importLog;
+
 
     /**
      * Get id
@@ -217,5 +222,13 @@ class UploadFile
      */
     public function __toString() {
         return (string)$this->message;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImportLog()
+    {
+        return $this->importLog;
     }
 }
