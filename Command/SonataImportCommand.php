@@ -62,7 +62,6 @@ class SonataImportCommand extends ContainerAwareCommand {
             return;
         }
 
-
         try {
             $fileLoader->setFile(new File($uploadFile->getFile()));
 
@@ -132,7 +131,7 @@ class SonataImportCommand extends ContainerAwareCommand {
                 if (!count($errors)) {
                     $idMethod = $this->getSetMethod($identifier, 'get');
                     /**
-                     * Если у сещности нет ID, то она новая - добавляем ее
+                     * Если у сущности нет ID, то она новая - добавляем ее
                      */
                     if (!$entity->$idMethod()) {
                         $this->em->persist($entity);
@@ -169,7 +168,6 @@ class SonataImportCommand extends ContainerAwareCommand {
             $this->em->flush($uploadFile);
         }
     }
-
 
     protected function getSetMethod($name, $method = 'set') {
         return $method . str_replace(' ', '', ucfirst(join('', explode('_', $name))));
