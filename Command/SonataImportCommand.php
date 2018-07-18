@@ -116,7 +116,7 @@ class SonataImportCommand extends ContainerAwareCommand {
                     }
                     try {
                         $method = $this->getSetMethod($name);
-                        $entity->$method($this->getValue($value, $formBuilder, $instance));
+                        $entity->$method($this->setValue($value, $formBuilder, $instance));
                     } catch (\Exception $e) {
                         $errors[] = $e->getMessage();
                         break;
