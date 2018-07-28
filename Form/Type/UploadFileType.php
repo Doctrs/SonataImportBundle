@@ -53,7 +53,7 @@ class UploadFileType extends AbstractType
         $loader = [];
         $loaders_list = $this->container->getParameter('doctrs_sonata_import.class_loaders');
         foreach ($loaders_list as $key => $item) {
-            $loader[$key] = $item['name'];
+            $loader[$item['name']] = $key;
         }
         $builder->add('loaderClass', ChoiceType::class, [
             'choices' => $loader,
