@@ -176,7 +176,7 @@ class SonataImportCommand extends ContainerAwareCommand {
     protected function setValue($value, FormBuilderInterface $formBuilder, AbstractAdmin $admin) {
 
         $mappings = $this->getContainer()->getParameter('doctrs_sonata_import.mappings');
-        $type = $formBuilder->getType()->getName();
+        $type = $formBuilder->getType();
 
         /**
          * Проверяем кастомные типы форм на наличие в конфиге.
