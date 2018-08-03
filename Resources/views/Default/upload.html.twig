@@ -70,6 +70,10 @@
                 text-align: center;
             }
 
+            .go-back-list-link {
+                margin-top: 15px;
+            }
+
         </style>
         <div class="row">
             <div class="col-md-12">
@@ -88,7 +92,10 @@
                                         {{ 'upload.h1.success'|trans({}, 'DoctrsSonataImportBundle') }}
                                     </h4>
                                 {% endif %}
+
+                                <p class="go-back-list-link">Click <b><a href="{{ admin.generateUrl('list') }}" class="">here</a></b> to go back to the list.</p>
                             </div>
+
                             <div class="box-body">
                                 <div class="sonata-ba-collapsed-fields">
                                     <div id="uploading">

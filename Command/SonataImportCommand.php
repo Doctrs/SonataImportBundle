@@ -253,8 +253,9 @@ class SonataImportCommand extends ContainerAwareCommand {
                 }
             }
         }
-        $listenerInst || die($eventListener.'Listener is not registered in the event manager');
-        $evm = $this->em->getEventManager();
-        $evm->removeEventListener(array('prePersist'), $listenerInst);
+        if (!is_null($listenerInst)) {
+            $evm = $this->em->getEventManager();
+            $evm->removeEventListener(array('prePersist'), $listenerInst);
+        }
     }
 }
