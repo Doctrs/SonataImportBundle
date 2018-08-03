@@ -3,6 +3,7 @@
 namespace Doctrs\SonataImportBundle\Controller;
 
 use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Doctrs\SonataImportBundle\Entity\UploadFile;
 use Doctrs\SonataImportBundle\Form\Type\UploadFileType;
@@ -75,7 +76,11 @@ class DefaultController extends CRUDController {
         ]);
         $data = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->pagerfanta($request);
         $paginator = new Pagerfanta(new DoctrineORMAdapter($data));
-        $paginator->setCurrentPage($request->get('page', 1));
+        try {
+            $paginator->setCurrentPage($request->get('page', 1));
+        } catch (OutOfRangeCurrentPageException $e) {
+            $paginator->setCurrentPage(1);
+        }
         $paginator->setMaxPerPage(100);
 
         return $this->render('@DoctrsSonataImport/Default/upload.html.twig', [
