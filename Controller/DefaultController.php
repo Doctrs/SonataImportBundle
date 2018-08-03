@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Process\Process;
 
 class DefaultController extends CRUDController {
 
@@ -124,7 +125,7 @@ class DefaultController extends CRUDController {
     /**
      * @param UploadFile $fileEntity
      */
-    private function runCommand(UploadFile $fileEntity) {
+    /*private function runCommand(UploadFile $fileEntity) {
         $application = new Application($this->get('kernel'));
         $application->setAutoExit(false);
 
@@ -134,9 +135,28 @@ class DefaultController extends CRUDController {
             'admin_code' => $this->admin->getCode(),
             'encode' => $fileEntity->getEncode() ? $fileEntity->getEncode() : 'utf8',
             'file_loader' => $fileEntity->getLoaderClass(),
+            'table_key' => $fileEntity->getTableKey()
         ));
 
         $output = new NullOutput();
         $application->run($input, $output);
+    }*/
+
+
+    /**
+     * @param UploadFile $fileEntity
+     */
+    private function runCommand(UploadFile $fileEntity) {
+        $command = sprintf(
+            '/usr/bin/php %s/console doctrs:sonata:import %d "%s" "%s" %s %s> /dev/null 2>&1 &',
+            $this->get('kernel')->getRootDir(),
+            $fileEntity->getId(),
+            $this->admin->getCode(),
+            $fileEntity->getEncode() ? $fileEntity->getEncode() : 'utf8',
+            $fileEntity->getLoaderClass(),
+            $fileEntity->getTableKey()
+        );
+        $process = new Process($command);
+        $process->run();
     }
 }

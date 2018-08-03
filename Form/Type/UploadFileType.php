@@ -59,14 +59,30 @@ class UploadFileType extends AbstractType
             'choices' => $loader,
             'label' => 'form.loader_class'
         ]);
+
+        $tableKeys = array(
+            'sku' => 'Sku',
+            'id' => 'ID'
+        );
+        $defaultKey = 'sku';
+        $builder->add('tableKey', ChoiceType::class, [
+                'choices' => $tableKeys,
+                'data' => $defaultKey,
+                'label' => 'form.default_key.label',
+                'help_block' => 'form.default_key.help_block'
+            ]
+        );
+
         $builder
             ->add('submit', SubmitType::class, [
                 'label' => 'form.submit',
                 'attr' => [
-                    'class' => 'btn btn-success'
+                    'class' => 'btn btn-success align-right'
                 ]
             ])
         ;
+
+
     }
 
     /**

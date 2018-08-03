@@ -4,6 +4,9 @@ form:
   encode: 'Encode'
   loader_class: 'Type of file'
   submit: 'Submit'
+  default_key:
+    label: 'Key'
+    help_block: 'Key by which system will try to find existing entity for update'
 index:
   h1: 'Import'
   h2: 'load Format'
@@ -28,3 +31,9 @@ upload:
       update: 'updated'
       error: 'Error'
     edit: 'Edit'
+  results:
+    all: 'All'
+    sucessful: 'Successful'
+    new: 'Newly Created'
+    updated: 'Updated'
+    error: 'Error'

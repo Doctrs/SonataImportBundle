@@ -94,34 +94,37 @@
                                     <div class="status">
                                         <a {{ app.request.get('type') == 'all' ? 'class="active"' : '' }}
                                                 href="?page={{ app.request.get('page', 1) }}&type=all">
-                                            Все
+                                            {{ 'upload.results.all'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a> |
                                         <a {{ app.request.get('type') == 'success' ? 'class="active"' : '' }}
                                                 href="?page={{ app.request.get('page', 1) }}&type=success">
-                                            Успешно загруженные
+                                            {{ 'upload.results.sucessful'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a> |
                                         <a {{ app.request.get('type') == 'new' ? 'class="active"' : '' }}
                                                 href="?page={{ app.request.get('page', 1) }}&type=new">
-                                            Новые
+                                            {{ 'upload.results.new'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a> |
                                         <a {{ app.request.get('type') == 'update' ? 'class="active"' : '' }}
                                                 href="?page={{ app.request.get('page', 1) }}&type=update">
-                                            Обновленные
+                                            {{ 'upload.results.updated'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a> |
                                         <a {{ app.request.get('type') == 'error' ? 'class="active"' : '' }}
                                                 href="?page={{ app.request.get('page', 1) }}&type=error">
-                                            С ошибкой
+                                            {{ 'upload.results.error'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a>
                                     </div>
 
                                     {{ pagerfanta(paginator) }}
-                                    <table class="table">
-                                        <tr>
-                                            <th>{{ 'upload.table.line'|trans({}, 'DoctrsSonataImportBundle') }}</th>
-                                            <th>{{ 'upload.table.status'|trans({}, 'DoctrsSonataImportBundle') }}</th>
-                                            <th>{{ 'upload.table.entity'|trans({}, 'DoctrsSonataImportBundle') }}</th>
-                                            <th>{{ 'upload.table.error'|trans({}, 'DoctrsSonataImportBundle') }}</th>
-                                        </tr>
+                                    <table class="table table-bordered table-striped sonata-ba-list">
+                                        <thead>
+                                            <tr>
+                                                <th>{{ 'upload.table.line'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                                <th>{{ 'upload.table.status'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                                <th>{{ 'upload.table.entity'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                                <th>{{ 'upload.table.error'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
                                         {% for i in paginator %}
 
                                             <tr>
@@ -152,6 +155,7 @@
                                                 </td>
                                             </tr>
                                         {% endfor %}
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>

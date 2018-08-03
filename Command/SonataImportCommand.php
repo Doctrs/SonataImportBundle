@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\File\File;
+use \ReflectionClass;
 
 class SonataImportCommand extends ContainerAwareCommand {
 
@@ -33,6 +34,7 @@ class SonataImportCommand extends ContainerAwareCommand {
             ->addArgument('admin_code', InputArgument::REQUIRED, 'code to sonata admin bundle')
             ->addArgument('encode', InputArgument::OPTIONAL, 'file encode')
             ->addArgument('file_loader', InputArgument::OPTIONAL, 'number of loader class')
+            ->addArgument('table_key', InputArgument::OPTIONAL, 'Key by which system will try to find existing entity for update')
         ;
     }
 
@@ -43,9 +45,17 @@ class SonataImportCommand extends ContainerAwareCommand {
         $adminCode = $input->getArgument('admin_code');
         $encode = strtolower($input->getArgument('encode'));
         $fileLoaderId = $input->getArgument('file_loader');
+        $tableKey = $input->getArgument('table_key');
 
         /** @var UploadFile $uploadFile */
         $uploadFile = $this->em->getRepository('DoctrsSonataImportBundle:UploadFile')->find($uploadFileId);
+
+        // We need to remove utf8 BOM mark
+        $content = file_get_contents($uploadFile->getFile());
+        $bom = pack('H*','EFBBBF');
+        $content = preg_replace("/^$bom/", '', $content);
+        file_put_contents($uploadFile->getFile(), $content);
+
         $fileLoaders = $this->getContainer()->getParameter('doctrs_sonata_import.class_loaders');
         $fileLoader = isset($fileLoaders[$fileLoaderId], $fileLoaders[$fileLoaderId]['class']) ?
             $fileLoaders[$fileLoaderId]['class'] : null;
@@ -70,11 +80,17 @@ class SonataImportCommand extends ContainerAwareCommand {
             $instance = $pool->getInstance($adminCode);
             $entityClass = $instance->getClass();
             $meta = $this->em->getClassMetadata($entityClass);
-            $identifier = $meta->getSingleIdentifierFieldName();
+            $identifier = $tableKey;
             $exportFields = $instance->getExportFields();
             $form = $instance->getFormBuilder();
+            $this->removeListenersBeforeUpdating(
+                $entityClass
+            );
             foreach ($fileLoader->getIteration() as $line => $data) {
-
+                if ($line == 0) {
+                    $exportFields = $data;
+                    continue;
+                }
                 $log = new ImportLog();
                 $log
                     ->setLine($line)
@@ -87,12 +103,21 @@ class SonataImportCommand extends ContainerAwareCommand {
                     $value = isset($data[$key]) ? $data[$key] : '';
 
                     /**
-                     * В случае если указан ID (первый столбец)
-                     * ищем сущность в базе
-                     */
-                    if ($name === $identifier) {
+                    * If the ID is specified (the first column)
+                    * Looking for an entity in the database
+                    */
+                    if ($name == $identifier) {
                         if ($value) {
-                            $oldEntity = $instance->getObject($value);
+                            //$oldEntity = $instance->getObject($value);
+                            $oldEntity = $this->em->getRepository(
+                                get_class($entity)
+                            )
+                            ->findOneBy(
+                                array(
+                                    $identifier => $value
+                                )
+                            );
+
                             if ($oldEntity) {
                                 $entity = $oldEntity;
                             }
@@ -100,17 +125,17 @@ class SonataImportCommand extends ContainerAwareCommand {
                         continue;
                     }
                     /**
-                     * Поля форм не всегда соответствуют тому, что есть на сайте, и что в админке
-                     * Поэтому если поле не указано в админке, то просто пропускаем его
-                     */
+                    * Fields of forms do not always correspond to what is on the site, and that in the admin area
+                    * Therefore, if the field is not specified in the admin panel, then simply skip it
+                    */
                     if (!$form->has($name)) {
                         continue;
                     }
                     $formBuilder = $form->get($name);
                     /**
-                     * Многие делают ошибки в стандартной кодировке,
-                     * поэтому на всякий случай провверяем оба варианта написания
-                     */
+                    * Many make errors in the standard encoding,
+                    * therefore, just in case, we check both variants of writing
+                    */
                     if ($encode !== 'utf8' && $encode !== 'utf-8') {
                         $value = iconv($encode, 'utf8//TRANSLIT', $value);
                     }
@@ -131,8 +156,8 @@ class SonataImportCommand extends ContainerAwareCommand {
                 if (!count($errors)) {
                     $idMethod = $this->getSetMethod($identifier, 'get');
                     /**
-                     * Если у сущности нет ID, то она новая - добавляем ее
-                     */
+                    * If the entity does not have an ID, then it is new - add it
+                    */
                     if (!$entity->$idMethod()) {
                         $this->em->persist($entity);
                         $log->setStatus(ImportLog::STATUS_SUCCESS);
@@ -152,10 +177,10 @@ class SonataImportCommand extends ContainerAwareCommand {
             $this->em->flush($uploadFile);
         } catch (\Exception $e) {
             /**
-             * Данный хак нужен в случае бросания ORMException
-             * В случае бросания ORMException entity manager останавливается
-             * и его требуется перезагрузить
-             */
+            * This hack is needed in case of throwing ORMException
+            * If ORMException is thrown, entity manager stops
+            * and you need to restart it
+            */
             if (!$this->em->isOpen()) {
                 $this->em = $this->em->create(
                     $this->em->getConnection(),
@@ -179,9 +204,9 @@ class SonataImportCommand extends ContainerAwareCommand {
         $type = $formBuilder->getType();
 
         /**
-         * Проверяем кастомные типы форм на наличие в конфиге.
-         * В случае совпадения, получаем значение из класса, указанного в конфиге
-         */
+        * Check the custom form types for the presence in the config.
+         * In case of a match, we get the value from the class specified in the config
+        */
         foreach ($mappings as $item) {
             if ($item['name'] === $type) {
                 if ($this->getContainer()->has($item['class']) && $this->getContainer()->get($item['class']) instanceof ImportInterface) {
@@ -202,5 +227,29 @@ class SonataImportCommand extends ContainerAwareCommand {
         }
 
         return (string)$value;
+    }
+
+    protected function removeListenersBeforeUpdating($entityClass)
+    {
+        // Remove listeners for that entity, we just want to update flat table
+        $listenerInst = null;
+        foreach ($this->em->getEventManager()->getListeners() as $event => $listeners) {
+            foreach ($listeners as $hash => $listener) {
+                //echo get_class($listener).'<br/>';
+
+                $className = new \ReflectionClass($entityClass);
+                $className = $className->getShortName();
+                $listenerName = new \ReflectionClass($listener);
+                $listenerName = $listenerName->getShortName();
+                $eventListener = $className.'EventListener';
+                if ($listenerName == $eventListener) {
+                    $listenerInst = $listener;
+                    break 2;
+                }
+            }
+        }
+        $listenerInst || die($eventListener.'Listener is not registered in the event manager');
+        $evm = $this->em->getEventManager();
+        $evm->removeEventListener(array('prePersist'), $listenerInst);
     }
 }

@@ -73,9 +73,18 @@ class UploadFile
     private $message;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="table_key", type="text", nullable=true)
+     */
+    private $tableKey;
+
+    /**
      * @ORM\OneToMany(targetEntity="Doctrs\SonataImportBundle\Entity\ImportLog", mappedBy="uploadFile")
      */
     private $importLog;
+    
+
 
 
     /**
@@ -231,4 +240,22 @@ class UploadFile
     {
         return $this->importLog;
     }
+
+    /**
+     * @return string
+     */
+    public function getTableKey()
+    {
+        return $this->tableKey;
+    }
+
+    /**
+     * @param string $tableKey
+     */
+    public function setTableKey($tableKey)
+    {
+        $this->tableKey = $tableKey;
+    }
+
+
 }
