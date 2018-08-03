@@ -62,9 +62,9 @@ class ImportLog
     private $uploadFile;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="foreign_id", type="integer", nullable=true)
+     * @ORM\Column(name="foreign_id", type="text", nullable=true)
      */
     private $foreignId;
 

@@ -73,10 +73,10 @@ class DefaultController extends CRUDController {
         $countImport = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->count([
             'uploadFile' => $uploadFile->getId()
         ]);
-
         $data = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->pagerfanta($request);
         $paginator = new Pagerfanta(new DoctrineORMAdapter($data));
         $paginator->setCurrentPage($request->get('page', 1));
+        $paginator->setMaxPerPage(100);
 
         return $this->render('@DoctrsSonataImport/Default/upload.html.twig', [
             'uploadFile' => $uploadFile,

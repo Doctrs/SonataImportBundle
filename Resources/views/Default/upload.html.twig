@@ -60,12 +60,15 @@
         </script>
     {% else %}
         <style>
-            .status a.active{
-                color:black;
-                text-decoration: underline;
+            .btn-active {
+                background-color: #a0a0a0;
+            }
+
+            .pagerfanta {
+                margin-top: 10px;
+                margin-bottom: 10px;
             }
         </style>
-
         <div class="row">
             <div class="col-md-12">
                 <div class="row">
@@ -92,29 +95,30 @@
                                     <h4 id="head_h1">{{ 'upload.log'|trans({}, 'DoctrsSonataImportBundle') }}</h4>
 
                                     <div class="status">
-                                        <a {{ app.request.get('type') == 'all' ? 'class="active"' : '' }}
+                                        <a class="{{ app.request.get('type') == 'all' ? 'btn-active' : '' }} btn btn-default"
                                                 href="?page={{ app.request.get('page', 1) }}&type=all">
                                             {{ 'upload.results.all'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a> |
-                                        <a {{ app.request.get('type') == 'success' ? 'class="active"' : '' }}
+                                        <a class="{{ app.request.get('type') == 'success' ? 'btn-active' : '' }} btn btn-default "
                                                 href="?page={{ app.request.get('page', 1) }}&type=success">
                                             {{ 'upload.results.sucessful'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a> |
-                                        <a {{ app.request.get('type') == 'new' ? 'class="active"' : '' }}
+                                        <a class="{{ app.request.get('type') == 'new' ? 'btn-active' : '' }} btn btn-default "
                                                 href="?page={{ app.request.get('page', 1) }}&type=new">
                                             {{ 'upload.results.new'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a> |
-                                        <a {{ app.request.get('type') == 'update' ? 'class="active"' : '' }}
+                                        <a class="{{ app.request.get('type') == 'update' ? 'btn-active' : '' }} btn btn-default "
                                                 href="?page={{ app.request.get('page', 1) }}&type=update">
                                             {{ 'upload.results.updated'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a> |
-                                        <a {{ app.request.get('type') == 'error' ? 'class="active"' : '' }}
+                                        <a class="{{ app.request.get('type') == 'error' ? 'btn-active' : '' }} btn btn-default "
                                                 href="?page={{ app.request.get('page', 1) }}&type=error">
                                             {{ 'upload.results.error'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a>
                                     </div>
-
-                                    {{ pagerfanta(paginator) }}
+                                    <div class="pagerfanta">
+                                        {{ pagerfanta(paginator, 'twitter_bootstrap3') }}
+                                    </div>
                                     <table class="table table-bordered table-striped sonata-ba-list">
                                         <thead>
                                             <tr>
@@ -128,7 +132,7 @@
                                         {% for i in paginator %}
 
                                             <tr>
-                                                <td>{{ i.line + 1 }}</td>
+                                                <td>{{ i.foreignId }}</td>
                                                 <td>
                                                     {% if i.status == 1 %}
                                                         {{ 'upload.table.stat.new'|trans({}, 'DoctrsSonataImportBundle') }}

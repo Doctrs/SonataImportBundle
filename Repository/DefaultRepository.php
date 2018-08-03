@@ -26,6 +26,8 @@ class DefaultRepository extends EntityRepository {
                 $sql->where('data.status = 3');
                 break;
         }
+
+        $sql->andWhere('data.uploadFile = '.$request->get('id'));
         return $sql->getQuery();
     }
 
