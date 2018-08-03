@@ -1,6 +1,8 @@
 
 form:
-  file: 'File'
+  file:
+    label: 'File'
+    help_block: 'Make sure the first line in attached file contains column names, exactly like in the "Key" dropdown. Only those columns will be updated. Uploading file without column titles, could result in an error.'
   encode: 'Encode'
   loader_class: 'Type of file'
   submit: 'Submit'
@@ -20,7 +22,7 @@ upload:
     success: 'Successfully completed'
   upload_entity: 'Processed entities '
   error: 'Error'
-  log: 'Log'
+  log: 'Import Results'
   table:
     line: 'Table Key'
     status: 'Status'

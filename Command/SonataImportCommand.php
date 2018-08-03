@@ -120,6 +120,9 @@ class SonataImportCommand extends ContainerAwareCommand {
 
                             if ($oldEntity) {
                                 $entity = $oldEntity;
+                            } else {
+                                // We're going to need that later, because it's a new entity.
+                                $identifierValue = $value;
                             }
                         }
                         continue;
@@ -159,6 +162,8 @@ class SonataImportCommand extends ContainerAwareCommand {
                     * If the entity does not have an ID, then it is new - add it
                     */
                     if (!$entity->$idMethod()) {
+                        $idSetMethod = $this->getSetMethod($identifier, 'set');
+                        $entity->$idSetMethod($identifierValue);
                         $this->em->persist($entity);
                         $log->setStatus(ImportLog::STATUS_SUCCESS);
                     } else {

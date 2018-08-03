@@ -28,7 +28,8 @@ class UploadFileType extends AbstractType
     {
         $builder
             ->add('file', FileType::class, [
-                'label' => 'form.file'
+                'label' => 'form.file.label',
+                'help_block' => 'form.file.help_block'
             ])
         ;
 

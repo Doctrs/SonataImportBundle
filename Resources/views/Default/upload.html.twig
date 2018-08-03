@@ -67,7 +67,9 @@
             .pagerfanta {
                 margin-top: 10px;
                 margin-bottom: 10px;
+                text-align: center;
             }
+
         </style>
         <div class="row">
             <div class="col-md-12">
@@ -95,7 +97,7 @@
                                     <h4 id="head_h1">{{ 'upload.log'|trans({}, 'DoctrsSonataImportBundle') }}</h4>
 
                                     <div class="status">
-                                        <a class="{{ app.request.get('type') == 'all' ? 'btn-active' : '' }} btn btn-default"
+                                        <a class="{{ (app.request.get('type') == 'all' or app.request.get('type') == '')? 'btn-active' : '' }} btn btn-default"
                                                 href="?page={{ app.request.get('page', 1) }}&type=all">
                                             {{ 'upload.results.all'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a> |
@@ -116,53 +118,59 @@
                                             {{ 'upload.results.error'|trans({}, 'DoctrsSonataImportBundle') }}
                                         </a>
                                     </div>
-                                    <div class="pagerfanta">
-                                        {{ pagerfanta(paginator, 'twitter_bootstrap3') }}
-                                    </div>
-                                    <table class="table table-bordered table-striped sonata-ba-list">
-                                        <thead>
-                                            <tr>
-                                                <th>{{ 'upload.table.line'|trans({}, 'DoctrsSonataImportBundle') }}</th>
-                                                <th>{{ 'upload.table.status'|trans({}, 'DoctrsSonataImportBundle') }}</th>
-                                                <th>{{ 'upload.table.entity'|trans({}, 'DoctrsSonataImportBundle') }}</th>
-                                                <th>{{ 'upload.table.error'|trans({}, 'DoctrsSonataImportBundle') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for i in paginator %}
-
-                                            <tr>
-                                                <td>{{ i.foreignId }}</td>
-                                                <td>
-                                                    {% if i.status == 1 %}
-                                                        {{ 'upload.table.stat.new'|trans({}, 'DoctrsSonataImportBundle') }}
-                                                    {% elseif i.status == 2 %}
-                                                        {{ 'upload.table.stat.update'|trans({}, 'DoctrsSonataImportBundle') }}
-                                                    {% elseif i.status == 3 %}
-                                                        {{ 'upload.table.stat.error'|trans({}, 'DoctrsSonataImportBundle') }}
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    {% if i.foreignId %}
-                                                        <a href="{{ admin.generateUrl('edit', {'id': i.foreignId}) }}">
-                                                            {{ 'upload.table.edit'|trans({}, 'DoctrsSonataImportBundle') }}
-                                                        </a>
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    {% set error_message = i.messageEncode %}
-                                                    {% if error_message|length %}
-                                                        {% for i in error_message %}
-                                                            {{ i }}
-                                                        {% endfor %}
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box box-primary">
+                            <div class="pagerfanta">
+                                {{ pagerfanta(paginator, 'twitter_bootstrap3') }}
+                            </div>
+                            <table class="table table-bordered table-striped sonata-ba-list">
+                                <thead>
+                                <tr>
+                                    <th>{{ 'upload.table.line'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                    <th>{{ 'upload.table.status'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                    <th>{{ 'upload.table.entity'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                    <th>{{ 'upload.table.error'|trans({}, 'DoctrsSonataImportBundle') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in paginator %}
+
+                                    <tr>
+                                        <td>{{ i.foreignId }}</td>
+                                        <td>
+                                            {% if i.status == 1 %}
+                                                {{ 'upload.table.stat.new'|trans({}, 'DoctrsSonataImportBundle') }}
+                                            {% elseif i.status == 2 %}
+                                                {{ 'upload.table.stat.update'|trans({}, 'DoctrsSonataImportBundle') }}
+                                            {% elseif i.status == 3 %}
+                                                {{ 'upload.table.stat.error'|trans({}, 'DoctrsSonataImportBundle') }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if i.foreignId %}
+                                                <a href="{{ admin.generateUrl('edit', {'id': i.foreignId}) }}">
+                                                    {{ 'upload.table.edit'|trans({}, 'DoctrsSonataImportBundle') }}
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% set error_message = i.messageEncode %}
+                                            {% if error_message|length %}
+                                                {% for i in error_message %}
+                                                    {{ i }}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
