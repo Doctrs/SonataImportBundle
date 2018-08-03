@@ -20,12 +20,12 @@ upload:
     success: 'Successfully completed'
   upload_entity: 'Processed entities '
   error: 'Error'
-  log: 'Log download'
+  log: 'Log'
   table:
-    line: '#String'
-    status: '#Status'
-    entity: '#Entity'
-    error: '#Errors'
+    line: 'Table Key'
+    status: 'Status'
+    entity: 'Entity'
+    error: 'Errors'
     stat:
       new: 'New'
       update: 'updated'

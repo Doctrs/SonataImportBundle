@@ -23,6 +23,20 @@ trait AdminImportTrait {
         ]);
     }
 
+    public function configureActionButtons($action, $object = null)
+    {
+        $list = parent::configureActionButtons($action, $object);
+
+        $list['import'] = array(
+            'label'              => 'Import',
+            'url'                => $this->generateUrl('import'),
+            'icon'               => 'upload',
+            'template'              => 'DoctrsSonataImportBundle::Button/import_button.html.twig'
+        );
+
+        return $list;
+    }
+
 
     public function getDashboardActions()
     {

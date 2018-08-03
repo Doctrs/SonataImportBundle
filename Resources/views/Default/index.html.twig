@@ -2,6 +2,13 @@
 
 
 {% block form %}
+    <style type="text/css">
+        .submit-file {
+            display: block;
+            margin-left: 20px;
+        }
+    </style>
+
     <div class="row">
         <div class="col-md-12">
             <div class="row">
@@ -17,6 +24,7 @@
                                 {{ form(form) }}
                             </div>
                         </div>
+                        <!--
                         <div class="box-header">
                             <h4>{{ 'index.h2'|trans({}, 'DoctrsSonataImportBundle') }}</h4>
                         </div>
@@ -41,7 +49,7 @@
                                 </tr>
                             {% endfor %}
                         </table>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

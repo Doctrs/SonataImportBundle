@@ -18,6 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class UploadFileType extends AbstractType
 {
     use ContainerAwareTrait;
+    private $adminClass = null;
 
     /**
      * @param FormBuilderInterface $builder
@@ -60,24 +61,28 @@ class UploadFileType extends AbstractType
             'label' => 'form.loader_class'
         ]);
 
-        $tableKeys = array(
-            'sku' => 'Sku',
-            'id' => 'ID'
-        );
-        $defaultKey = 'sku';
-        $builder->add('tableKey', ChoiceType::class, [
-                'choices' => $tableKeys,
-                'data' => $defaultKey,
-                'label' => 'form.default_key.label',
-                'help_block' => 'form.default_key.help_block'
-            ]
-        );
+        if (!is_null($this->adminClass)) {
+            $tableKeys = array();
+            $exportFields = $this->adminClass->getExportFields();
+            foreach($exportFields as $exportField) {
+                $tableKeys[$exportField] = $exportField;
+            }
+
+            $defaultKey = 'sku';
+            $builder->add('tableKey', ChoiceType::class, [
+                    'choices' => $tableKeys,
+                    'data' => $defaultKey,
+                    'label' => 'form.default_key.label',
+                    'help_block' => 'form.default_key.help_block'
+                ]
+            );
+        }
 
         $builder
             ->add('submit', SubmitType::class, [
                 'label' => 'form.submit',
                 'attr' => [
-                    'class' => 'btn btn-success align-right'
+                    'class' => 'btn btn-success submit-file'
                 ]
             ])
         ;
@@ -110,4 +115,22 @@ class UploadFileType extends AbstractType
     {
         return 'doctrs_sonataadminbundle_uploadfile';
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAdminClass()
+    {
+        return $this->adminClass;
+    }
+
+    /**
+     * @param mixed $adminClass
+     */
+    public function setAdminClass($adminClass)
+    {
+        $this->adminClass = $adminClass;
+    }
+
+
 }
