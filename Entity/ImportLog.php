@@ -68,6 +68,13 @@ class ImportLog
      */
     private $foreignId;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="foreign_entity_id", type="integer", nullable=true)
+     */
+    private $foreignEntityId;
+
 
     /**
      * Get id
@@ -220,4 +227,22 @@ class ImportLog
     public function __toString() {
         return (string)$this->message;
     }
+
+    /**
+     * @return string
+     */
+    public function getForeignEntityId()
+    {
+        return $this->foreignEntityId;
+    }
+
+    /**
+     * @param string $foreignEntityId
+     */
+    public function setForeignEntityId( $foreignEntityId)
+    {
+        $this->foreignEntityId = $foreignEntityId;
+    }
+
+
 }

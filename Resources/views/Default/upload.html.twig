@@ -159,8 +159,8 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if i.foreignId %}
-                                                <a href="{{ admin.generateUrl('edit', {'id': i.foreignId}) }}">
+                                            {% if i.foreignEntityId %}
+                                                <a href="{{ admin.generateUrl('edit', {'id': i.foreignEntityId}) }}">
                                                     {{ 'upload.table.edit'|trans({}, 'DoctrsSonataImportBundle') }}
                                                 </a>
                                             {% endif %}

@@ -171,6 +171,8 @@ class SonataImportCommand extends ContainerAwareCommand {
                     }
                     $this->em->flush($entity);
                     $log->setForeignId($entity->$idMethod());
+                    $trueIdentifierMethodName = 'get'.ucfirst($meta->getSingleIdentifierFieldName());
+                    $log->setForeignEntityId($entity->$trueIdentifierMethodName());
                 } else {
                     $log->setMessage(json_encode($errors));
                     $log->setStatus(ImportLog::STATUS_ERROR);
