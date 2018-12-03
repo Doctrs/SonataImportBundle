@@ -155,7 +155,7 @@ class DefaultController extends CRUDController {
      */
     private function runCommand(UploadFile $fileEntity) {
         $command = sprintf(
-            '/usr/bin/php %s/console doctrs:sonata:import %d "%s" "%s" %s %s> /dev/null 2>&1 &',
+            'php %s/console doctrs:sonata:import %d "%s" "%s" %s %s> /dev/null 2>&1 &',
             $this->get('kernel')->getRootDir(),
             $fileEntity->getId(),
             $this->admin->getCode(),
