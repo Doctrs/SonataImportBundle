@@ -163,6 +163,9 @@ class SonataImportCommand extends ContainerAwareCommand {
                     */
                     if (!$entity->$idMethod()) {
                         $idSetMethod = $this->getSetMethod($identifier, 'set');
+                        if (!isset($identifierValue)) {
+                            continue;
+                        }
                         $entity->$idSetMethod($identifierValue);
                         $this->em->persist($entity);
                         $log->setStatus(ImportLog::STATUS_SUCCESS);
