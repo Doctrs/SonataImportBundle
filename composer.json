@@ -19,4 +19,4 @@
   "autoload": {
     "psr-4": { "Doctrs\\SonataImportBundle\\": "" }
   }
-rm -
+}
