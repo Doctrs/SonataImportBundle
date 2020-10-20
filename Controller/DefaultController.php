@@ -3,6 +3,7 @@
 namespace Doctrs\SonataImportBundle\Controller;
 
 use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Doctrs\SonataImportBundle\Entity\UploadFile;
 use Doctrs\SonataImportBundle\Form\Type\UploadFileType;
@@ -15,6 +16,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Process\Process;
 
 class DefaultController extends CRUDController {
 
@@ -24,7 +26,9 @@ class DefaultController extends CRUDController {
      */
     public function indexAction(Request $request) {
         $fileEntity = new UploadFile();
-        $form = $this->createForm(UploadFileType::class, $fileEntity, [
+        $form = $this->get('Doctrs\SonataImportBundle\Form\Type\UploadFileType');
+        $form->setAdminClass($this->admin);
+        $form = $this->createForm($form, $fileEntity, [
             'method' => 'POST'
         ]);
         $form->handleRequest($request);
@@ -33,6 +37,12 @@ class DefaultController extends CRUDController {
             if (!$fileEntity->getFile()->getError()) {
                 $fileEntity->move($this->getParameter('doctrs_sonata_import.upload_dir'));
 
+                $token = $this->get('security.token_storage')->getToken();
+                if ($token !== null) {
+                    $user = $token->getUser();
+                    $fileEntity->setUsername($user->getUsername());
+                }
+
                 $this->getDoctrine()->getManager()->persist($fileEntity);
                 $this->getDoctrine()->getManager()->flush($fileEntity);
 
@@ -40,6 +50,8 @@ class DefaultController extends CRUDController {
                 return $this->redirect($this->admin->generateUrl('upload', [
                     'id' => $fileEntity->getId()
                 ]));
+
+                die;
             } else {
                 $form->get('file')->addError(new FormError($fileEntity->getFile()->getErrorMessage()));
             }
@@ -72,10 +84,14 @@ class DefaultController extends CRUDController {
         $countImport = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->count([
             'uploadFile' => $uploadFile->getId()
         ]);
-
         $data = $em->getRepository('DoctrsSonataImportBundle:ImportLog')->pagerfanta($request);
         $paginator = new Pagerfanta(new DoctrineORMAdapter($data));
-        $paginator->setCurrentPage($request->get('page', 1));
+        try {
+            $paginator->setCurrentPage($request->get('page', 1));
+        } catch (OutOfRangeCurrentPageException $e) {
+            $paginator->setCurrentPage(1);
+        }
+        $paginator->setMaxPerPage(100);
 
         return $this->render('@DoctrsSonataImport/Default/upload.html.twig', [
             'uploadFile' => $uploadFile,
@@ -124,7 +140,7 @@ class DefaultController extends CRUDController {
     /**
      * @param UploadFile $fileEntity
      */
-    private function runCommand(UploadFile $fileEntity) {
+    /*private function runCommand(UploadFile $fileEntity) {
         $application = new Application($this->get('kernel'));
         $application->setAutoExit(false);
 
@@ -134,9 +150,28 @@ class DefaultController extends CRUDController {
             'admin_code' => $this->admin->getCode(),
             'encode' => $fileEntity->getEncode() ? $fileEntity->getEncode() : 'utf8',
             'file_loader' => $fileEntity->getLoaderClass(),
+            'table_key' => $fileEntity->getTableKey()
         ));
 
         $output = new NullOutput();
         $application->run($input, $output);
+    }*/
+
+
+    /**
+     * @param UploadFile $fileEntity
+     */
+    private function runCommand(UploadFile $fileEntity) {
+        $command = sprintf(
+            'php %s/console doctrs:sonata:import %d "%s" "%s" %s %s> /dev/null 2>&1 &',
+            $this->get('kernel')->getRootDir(),
+            $fileEntity->getId(),
+            $this->admin->getCode(),
+            $fileEntity->getEncode() ? $fileEntity->getEncode() : 'utf8',
+            $fileEntity->getLoaderClass(),
+            $fileEntity->getTableKey()
+        );
+        $process = new Process($command);
+        $process->run();
     }
 }

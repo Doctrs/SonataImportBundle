@@ -62,11 +62,18 @@ class ImportLog
     private $uploadFile;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="foreign_id", type="integer", nullable=true)
+     * @ORM\Column(name="foreign_id", type="text", nullable=true)
      */
     private $foreignId;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="foreign_entity_id", type="integer", nullable=true)
+     */
+    private $foreignEntityId;
 
 
     /**
@@ -220,4 +227,22 @@ class ImportLog
     public function __toString() {
         return (string)$this->message;
     }
+
+    /**
+     * @return string
+     */
+    public function getForeignEntityId()
+    {
+        return $this->foreignEntityId;
+    }
+
+    /**
+     * @param string $foreignEntityId
+     */
+    public function setForeignEntityId( $foreignEntityId)
+    {
+        $this->foreignEntityId = $foreignEntityId;
+    }
+
+
 }

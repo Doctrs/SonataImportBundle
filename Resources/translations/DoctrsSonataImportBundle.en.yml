@@ -1,9 +1,14 @@
 
 form:
-  file: 'File'
+  file:
+    label: 'File'
+    help_block: 'Make sure the first line in attached file contains column names, exactly like in the "Key" dropdown. Only those columns will be updated. Uploading file without column titles, could result in an error.'
   encode: 'Encode'
   loader_class: 'Type of file'
   submit: 'Submit'
+  default_key:
+    label: 'Key'
+    help_block: 'Key by which system will try to find existing entity for update'
 index:
   h1: 'Import'
   h2: 'load Format'
@@ -17,14 +22,20 @@ upload:
     success: 'Successfully completed'
   upload_entity: 'Processed entities '
   error: 'Error'
-  log: 'Log download'
+  log: 'Import Results'
   table:
-    line: '#String'
-    status: '#Status'
-    entity: '#Entity'
-    error: '#Errors'
+    line: 'Table Key'
+    status: 'Status'
+    entity: 'Entity'
+    error: 'Errors'
     stat:
       new: 'New'
       update: 'updated'
       error: 'Error'
     edit: 'Edit'
+  results:
+    all: 'All'
+    sucessful: 'Successful'
+    new: 'Newly Created'
+    updated: 'Updated'
+    error: 'Error'

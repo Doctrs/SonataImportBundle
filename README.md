@@ -53,7 +53,7 @@ doctrs_sonata_import:
         - { name: choice, class: doctrs.type.entity}
     upload_dir: %kernel.root_dir%/../web/uploads    
     class_loaders:
-        - { name: CSV, class: Doctrs\SonataImportBundle\Loaders\CsvFileLoader}
+        { "CSV": { name: CSV, class: Doctrs\SonataImportBundle\Loaders\CsvFileLoader}}
     #   - { name: XLS, class: AppBundle\Loader\Doctrs\XlsFileLoader}
     encode:
         default: utf8
@@ -110,6 +110,20 @@ class AnyClassAdmin extends AbstractAdmin {
         );
 
         return $actions;
+    }
+    ...
+    public function configureActionButtons($action, $object = null)
+    {
+        $list = parent::configureActionButtons($action, $object);
+
+        $list['import'] = array(
+            'label'              => 'Import',
+            'url'                => $this->generateUrl('import'),
+            'icon'               => 'upload',
+            'template'              => 'DoctrsSonataImportBundle::Button/import_button.html.twig'
+        );
+
+        return $list;
     }
 ```
 If you don't redefined these methods you can use trait
