@@ -20,6 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use \ReflectionClass;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class SonataImportCommand extends ContainerAwareCommand {
 
@@ -49,6 +50,10 @@ class SonataImportCommand extends ContainerAwareCommand {
 
         /** @var UploadFile $uploadFile */
         $uploadFile = $this->em->getRepository('DoctrsSonataImportBundle:UploadFile')->find($uploadFileId);
+
+        if ($uploadFile->getUsername() !== null) {
+            $this->simulateUserThatRequestedImport($uploadFile->getUsername());
+        }
 
         // We need to remove utf8 BOM mark
         $content = file_get_contents($uploadFile->getFile());
@@ -103,20 +108,20 @@ class SonataImportCommand extends ContainerAwareCommand {
                     $value = isset($data[$key]) ? $data[$key] : '';
 
                     /**
-                    * If the ID is specified (the first column)
-                    * Looking for an entity in the database
-                    */
+                     * If the ID is specified (the first column)
+                     * Looking for an entity in the database
+                     */
                     if ($name == $identifier) {
                         if ($value) {
                             //$oldEntity = $instance->getObject($value);
                             $oldEntity = $this->em->getRepository(
                                 get_class($entity)
                             )
-                            ->findOneBy(
-                                array(
-                                    $identifier => $value
-                                )
-                            );
+                                ->findOneBy(
+                                    array(
+                                        $identifier => $value
+                                    )
+                                );
 
                             if ($oldEntity) {
                                 $entity = $oldEntity;
@@ -128,17 +133,17 @@ class SonataImportCommand extends ContainerAwareCommand {
                         continue;
                     }
                     /**
-                    * Fields of forms do not always correspond to what is on the site, and that in the admin area
-                    * Therefore, if the field is not specified in the admin panel, then simply skip it
-                    */
+                     * Fields of forms do not always correspond to what is on the site, and that in the admin area
+                     * Therefore, if the field is not specified in the admin panel, then simply skip it
+                     */
                     if (!$form->has($name)) {
                         continue;
                     }
                     $formBuilder = $form->get($name);
                     /**
-                    * Many make errors in the standard encoding,
-                    * therefore, just in case, we check both variants of writing
-                    */
+                     * Many make errors in the standard encoding,
+                     * therefore, just in case, we check both variants of writing
+                     */
                     if ($encode !== 'utf8' && $encode !== 'utf-8') {
                         $value = iconv($encode, 'utf8//TRANSLIT', $value);
                     }
@@ -159,8 +164,8 @@ class SonataImportCommand extends ContainerAwareCommand {
                 if (!count($errors)) {
                     $idMethod = $this->getSetMethod($identifier, 'get');
                     /**
-                    * If the entity does not have an ID, then it is new - add it
-                    */
+                     * If the entity does not have an ID, then it is new - add it
+                     */
                     if (!$entity->$idMethod()) {
                         $idSetMethod = $this->getSetMethod($identifier, 'set');
                         if (!isset($identifierValue)) {
@@ -187,10 +192,10 @@ class SonataImportCommand extends ContainerAwareCommand {
             $this->em->flush($uploadFile);
         } catch (\Exception $e) {
             /**
-            * This hack is needed in case of throwing ORMException
-            * If ORMException is thrown, entity manager stops
-            * and you need to restart it
-            */
+             * This hack is needed in case of throwing ORMException
+             * If ORMException is thrown, entity manager stops
+             * and you need to restart it
+             */
             if (!$this->em->isOpen()) {
                 $this->em = $this->em->create(
                     $this->em->getConnection(),
@@ -214,9 +219,9 @@ class SonataImportCommand extends ContainerAwareCommand {
         $type = $formBuilder->getType();
 
         /**
-        * Check the custom form types for the presence in the config.
+         * Check the custom form types for the presence in the config.
          * In case of a match, we get the value from the class specified in the config
-        */
+         */
         foreach ($mappings as $item) {
             if ($item['name'] === $type->getName()) {
                 if ($this->getContainer()->has($item['class']) && $this->getContainer()->get($item['class']) instanceof ImportInterface) {
@@ -261,6 +266,22 @@ class SonataImportCommand extends ContainerAwareCommand {
         if (!is_null($listenerInst)) {
             $evm = $this->em->getEventManager();
             $evm->removeEventListener(array('prePersist'), $listenerInst);
+        }
+    }
+
+    private function simulateUserThatRequestedImport(string $username): void
+    {
+        $user = $this->em->getRepository('MytrioringsUserBundle:User')->findOneBy(['username' => $username]);
+
+        if ($user !== null) {
+            $token = new UsernamePasswordToken(
+                $user,
+                null,
+                'main',
+                $user->getRoles()
+            );
+
+            $this->getContainer()->get('security.token_storage')->setToken($token);
         }
     }
 }

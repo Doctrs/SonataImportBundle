@@ -80,27 +80,32 @@ class UploadFile
     private $tableKey;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="username", type="string")
+     */
+    private $username;
+
+    /**
      * @ORM\OneToMany(targetEntity="Doctrs\SonataImportBundle\Entity\ImportLog", mappedBy="uploadFile")
      */
     private $importLog;
-    
-
-
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
     }
 
+
     /**
      * Get ts
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getTs()
     {
@@ -257,5 +262,19 @@ class UploadFile
         $this->tableKey = $tableKey;
     }
 
+    /**
+     * @return string
+     */
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
 
+    /**
+     * @param string $username
+     */
+    public function setUsername(string $username): void
+    {
+        $this->username = $username;
+    }
 }

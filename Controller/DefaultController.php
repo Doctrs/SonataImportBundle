@@ -37,6 +37,12 @@ class DefaultController extends CRUDController {
             if (!$fileEntity->getFile()->getError()) {
                 $fileEntity->move($this->getParameter('doctrs_sonata_import.upload_dir'));
 
+                $token = $this->get('security.token_storage')->getToken();
+                if ($token !== null) {
+                    $user = $token->getUser();
+                    $fileEntity->setUsername($user->getUsername());
+                }
+
                 $this->getDoctrine()->getManager()->persist($fileEntity);
                 $this->getDoctrine()->getManager()->flush($fileEntity);
 
@@ -44,6 +50,8 @@ class DefaultController extends CRUDController {
                 return $this->redirect($this->admin->generateUrl('upload', [
                     'id' => $fileEntity->getId()
                 ]));
+
+                die;
             } else {
                 $form->get('file')->addError(new FormError($fileEntity->getFile()->getErrorMessage()));
             }
